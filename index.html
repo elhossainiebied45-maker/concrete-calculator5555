@@ -1,0 +1,2781 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>حاسبة مقاولات الخرسانة</title>
+<meta name="theme-color" content="#12304f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="حاسبة المقاولات">
+<meta name="application-name" content="حاسبة المقاولات">
+
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<script>
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.warn('تعذر تسجيل Service Worker:', err);
+    });
+  });
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<script>
+(function(){try{const t=localStorage.getItem('calc-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+
+<style>
+:root{--bg:#eef2f7;--card:#fff;--primary:#12304f;--primary-2:#1d4e7c;--accent:#f59e0b;--green:#16a34a;--red:#dc2626;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--soft:#f8fafc;--wood:#b45309;--wood-bg:#fef3c7;--wood-border:#fde68a;--input-bg:#f8fafc;--shadow:0 4px 18px -10px rgba(18,48,79,.28);--shadow-strong:0 10px 25px -12px rgba(18,48,79,.6);--purple:#7c3aed}
+[data-theme="dark"]{--bg:#0b1220;--card:#1e293b;--primary:#0f172a;--primary-2:#1e40af;--accent:#f59e0b;--green:#22c55e;--red:#ef4444;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;--soft:#0f172a;--wood:#fbbf24;--wood-bg:#3f2d0a;--wood-border:#78350f;--input-bg:#0f172a;--shadow:0 4px 18px -10px rgba(0,0,0,.6);--shadow-strong:0 10px 25px -12px rgba(0,0,0,.8);--purple:#8b5cf6}
+[data-theme="dark"] body{background:var(--bg);color:var(--text)}
+[data-theme="dark"] header{background:linear-gradient(135deg,#0f172a,#1e40af)}
+[data-theme="dark"] .card{background:var(--card);border-color:var(--border)}
+[data-theme="dark"] .card.wood-card{background:linear-gradient(180deg,#2a1f0a,#1e293b);border-color:var(--wood-border)}
+[data-theme="dark"] .card.wood-card.included{background:linear-gradient(180deg,#052e16,#1e293b);border-color:#166534}
+[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:var(--input-bg);color:var(--text);border-color:var(--border)}
+[data-theme="dark"] input:focus{background:#0f172a;border-color:#3b82f6}
+[data-theme="dark"] .card h2{border-bottom-color:#334155}
+[data-theme="dark"] .tbl-wrap{border-color:var(--border)}
+[data-theme="dark"] tbody tr:nth-child(even){background:#0f172a}
+[data-theme="dark"] tbody tr:nth-child(odd){background:transparent}
+[data-theme="dark"] tbody td{border-bottom-color:#334155}
+[data-theme="dark"] tbody td input{background:transparent;color:var(--text)}
+[data-theme="dark"] tbody td input:hover{background:#0f172a;border-color:#334155}
+[data-theme="dark"] tbody td input:focus{background:#0f172a}
+[data-theme="dark"] thead th{background:#0f172a}
+[data-theme="dark"] .subtotal{background:linear-gradient(90deg,#172554,#1e293b);border-color:#1e40af;color:#93c5fd}
+[data-theme="dark"] .subtotal.green{background:linear-gradient(90deg,#052e16,#1e293b);border-color:#166534;color:#86efac}
+[data-theme="dark"] .subtotal.wood{background:linear-gradient(90deg,#2a1f0a,#1e293b);border-color:#78350f;color:#fbbf24}
+[data-theme="dark"] .subtotal.purple{background:linear-gradient(90deg,#2e1065,#1e293b);border-color:#7c3aed;color:#c4b5fd}
+[data-theme="dark"] .results{background:linear-gradient(180deg,#1e293b,#0f172a)}
+[data-theme="dark"] .brow:nth-child(odd){background:#0f172a}
+[data-theme="dark"] .brow.total{background:#7f1d1d;border-color:#991b1b}
+[data-theme="dark"] .brow.total span,.brow.total b{color:#fca5a5}
+[data-theme="dark"] .brow.wood-separate{background:linear-gradient(90deg,#2a1f0a,#3f2d0a);border-color:#78350f}
+[data-theme="dark"] .brow.wood-separate span,.brow.wood-separate b{color:#fbbf24}
+[data-theme="dark"] .brow.wood-separate.included{background:linear-gradient(90deg,#052e16,#166534)}
+[data-theme="dark"] .brow.wood-separate.included span,.brow.wood-separate.included b{color:#86efac}
+[data-theme="dark"] .brow.sub-note{background:linear-gradient(90deg,#052e16,#166534);border-color:#166534}
+[data-theme="dark"] .brow.sub-note span,.brow.sub-note b{color:#86efac}
+[data-theme="dark"] .brow.partner-row{background:linear-gradient(90deg,#2e1065,#3b0764);border-color:#7c3aed}
+[data-theme="dark"] .brow.partner-row span,.brow.partner-row b{color:#c4b5fd}
+[data-theme="dark"] .kpi{background:var(--card);border-color:var(--border)}
+[data-theme="dark"] .kpi.profit{background:linear-gradient(180deg,#052e16,#1e293b);border-color:#166534}
+[data-theme="dark"] .kpi.profit.neg{background:linear-gradient(180deg,#7f1d1d,#1e293b);border-color:#991b1b}
+[data-theme="dark"] .kpi.contract,.kpi.value{background:linear-gradient(180deg,#172554,#1e293b);border-color:#1e40af}
+[data-theme="dark"] .kpi.received{background:linear-gradient(180deg,#052e16,#1e293b);border-color:#166534}
+[data-theme="dark"] .kpi.partner{background:linear-gradient(180deg,#2e1065,#1e293b);border-color:#7c3aed}
+[data-theme="dark"] .save-info{background:linear-gradient(135deg,#172554,#1e293b);border-color:#1e40af;color:#93c5fd}
+[data-theme="dark"] .formula-help{background:linear-gradient(135deg,#172554,#1e293b);border-color:#1e40af}
+[data-theme="dark"] .formula-help summary{color:#93c5fd}
+[data-theme="dark"] .formula-help .examples code{background:#0f172a;border-color:#1e40af;color:#93c5fd}
+[data-theme="dark"] .hint.wood-hint{color:#fbbf24;background:#2a1f0a;border-color:#78350f}
+[data-theme="dark"] .hint.wood-hint.active{color:#86efac;background:#052e16;border-color:#166534}
+[data-theme="dark"] .wood-payment-grid .w-item{background:#1e293b;border-color:var(--wood-border)}
+[data-theme="dark"] .wood-payment-grid .w-item input[type=number]{background:#2a1f0a;border-color:#78350f;color:#fbbf24}
+[data-theme="dark"] .concrete-split .s{background:#0f172a;border-color:var(--border)}
+[data-theme="dark"] .auto-wood-note{background:linear-gradient(90deg,#052e16,#166534);border-color:#166534;color:#86efac}
+[data-theme="dark"] .del{color:#475569}
+[data-theme="dark"] .del:hover{background:#7f1d1d;color:#fca5a5}
+[data-theme="dark"] .dup{color:#475569}
+[data-theme="dark"] .dup:hover{background:#172554;color:#93c5fd}
+[data-theme="dark"] .add-row{border-color:#475569;color:#93c5fd}
+[data-theme="dark"] .add-row:hover{background:#172554;border-color:#3b82f6}
+[data-theme="dark"] .empty-state{color:#64748b}
+[data-theme="dark"] .toggle-wrap{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .toggle-switch{background:#475569}
+[data-theme="dark"] td.labor-cell input[data-field=laborInput]{background:#0c1a2e;border-color:#1e40af}
+[data-theme="dark"] td.labor-cell input[data-field=laborInput]:focus{background:#0f172a;border-color:#3b82f6}
+[data-theme="dark"] .modal-content{background:var(--card)}
+[data-theme="dark"] .project-select{background:var(--card);color:var(--text);border-color:var(--border)}
+[data-theme="dark"] .alert-card.warn{background:linear-gradient(90deg,#3f2d0a,#4a3508);border-color:#78350f;color:#fbbf24}
+[data-theme="dark"] .alert-card.danger{background:linear-gradient(90deg,#3f1414,#4a1a1a);border-color:#7f1d1d;color:#fca5a5}
+[data-theme="dark"] .alert-card.success{background:linear-gradient(90deg,#052e16,#166534);border-color:#166534;color:#86efac}
+[data-theme="dark"] .alert-card.partner{background:linear-gradient(90deg,#2e1065,#3b0764);border-color:#7c3aed;color:#c4b5fd}
+[data-theme="dark"] .stat-tile{background:#0f172a;border-color:#334155}
+[data-theme="dark"] .template-item{background:var(--card);border-color:var(--border)}
+[data-theme="dark"] .template-item:hover{background:#172554;border-color:#3b82f6}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--text);padding:14px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+.app{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
+header{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-radius:18px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:var(--shadow-strong);transition:background .25s}
+header h1{font-size:1.3rem;font-weight:800;letter-spacing:-.3px}
+header h1 span{color:var(--accent)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:.8rem;padding:8px 12px;border-radius:10px;transition:.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-light{background:rgba(255,255,255,.15);color:#fff}
+.btn-light:hover:not(:disabled){background:rgba(255,255,255,.28)}
+.btn-accent{background:var(--accent);color:#3b2600}
+.btn-accent:hover{filter:brightness(1.08)}
+.btn-danger{background:rgba(220,38,38,.92);color:#fff}
+.btn-danger:hover{background:#dc2626}
+.btn-save{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff}
+.btn-save:hover{filter:brightness(1.08)}
+.btn-theme{background:rgba(255,255,255,.15);color:#fff;font-size:1rem;padding:8px 11px}
+.btn-theme:hover{background:rgba(255,255,255,.28);transform:rotate(15deg)}
+.btn-share{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff}
+.btn-share:hover{filter:brightness(1.08)}
+.btn-install{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;box-shadow:0 2px 8px -2px rgba(139,92,246,.5)}
+.btn-install:hover{filter:brightness(1.1)}
+.btn.undo,.btn.redo{background:rgba(255,255,255,.15);color:#fff;padding:8px 10px;font-size:.9rem}
+.btn.undo:hover:not(:disabled),.btn.redo:hover:not(:disabled){background:rgba(255,255,255,.28)}
+
+.user-menu{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border-radius:12px;padding:4px 8px 4px 4px}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;flex-shrink:0}
+.user-name{font-size:.78rem;font-weight:800;color:#fff;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px}
+.user-menu .btn-light{padding:5px 8px;font-size:.85rem}
+
+.page-nav{display:flex;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:6px;box-shadow:var(--shadow)}
+.nav-tab{flex:1;padding:10px 16px;border:0;background:transparent;border-radius:10px;font-family:inherit;font-size:.9rem;font-weight:800;color:var(--muted);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.nav-tab:hover{background:var(--soft);color:var(--primary-2)}
+.nav-tab.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;box-shadow:var(--shadow-strong)}
+[data-theme="dark"] .nav-tab.active{background:linear-gradient(135deg,#1e40af,#0f172a)}
+
+.project-bar{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);flex-wrap:wrap}
+.project-select{flex:1;min-width:180px;background:transparent;border:1.5px solid var(--border);border-radius:9px;padding:8px 11px;font-family:inherit;font-size:.9rem;font-weight:800;color:var(--text);outline:none;cursor:pointer}
+.project-select:focus{border-color:var(--primary-2)}
+.project-btn{border:1.5px solid var(--border);background:transparent;color:var(--text);padding:7px 11px;border-radius:9px;font-family:inherit;font-weight:800;font-size:.78rem;cursor:pointer;transition:.15s;white-space:nowrap}
+.project-btn:hover{background:var(--soft);border-color:var(--primary-2);color:var(--primary-2)}
+.project-btn.danger{color:var(--red);border-color:rgba(220,38,38,.3)}
+.project-btn.danger:hover{background:#fef2f2;border-color:var(--red)}
+.status-badge{padding:5px 10px;border-radius:99px;font-size:.72rem;font-weight:800;white-space:nowrap}
+.status-badge.active{background:#dcfce7;color:#15803d}
+.status-badge.completed{background:#dbeafe;color:#1d4e7c}
+.status-badge.paused{background:#fef3c7;color:#92400e}
+[data-theme="dark"] .status-badge.active{background:#052e16;color:#86efac}
+[data-theme="dark"] .status-badge.completed{background:#172554;color:#93c5fd}
+[data-theme="dark"] .status-badge.paused{background:#3f2d0a;color:#fbbf24}
+
+.search-bar{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px 12px;box-shadow:var(--shadow)}
+.search-bar input[type=search]{flex:1;background:transparent;border:0;padding:7px;font-family:inherit;font-size:.9rem;color:var(--text);outline:none}
+.search-bar input[type=search]::placeholder{color:var(--muted)}
+.search-bar .search-icon{color:var(--muted);font-size:1rem}
+.search-bar .clear-btn{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:5px 8px;border-radius:6px;font-size:.85rem;display:none}
+.search-bar.has-text .clear-btn{display:block}
+.search-bar .clear-btn:hover{background:var(--soft);color:var(--red)}
+.search-bar .search-count{font-size:.75rem;font-weight:700;color:var(--muted);padding:0 8px;white-space:nowrap}
+
+.card{background:var(--card);border-radius:16px;padding:18px;box-shadow:var(--shadow);border:1px solid rgba(226,232,240,.9);transition:background .25s,border-color .25s,opacity .25s;margin-bottom:14px}
+[data-theme="dark"] .card{border-color:var(--border)}
+.card.wood-card{border:1.5px solid var(--wood-border);background:linear-gradient(180deg,#fffbeb,#fff);transition:.2s}
+[data-theme="dark"] .card.wood-card{background:linear-gradient(180deg,#2a1f0a,#1e293b)}
+.card.wood-card.included{border-color:#bbf7d0;background:linear-gradient(180deg,#f0fdf4,#fff)}
+[data-theme="dark"] .card.wood-card.included{background:linear-gradient(180deg,#052e16,#1e293b);border-color:#166534}
+.card.collapsed{padding:12px 18px}
+.card.collapsed .card-body{display:none}
+.card h2{font-size:1rem;font-weight:800;color:var(--primary);display:flex;align-items:center;gap:9px;margin-bottom:8px;padding-bottom:10px;border-bottom:2px solid var(--soft);flex-wrap:wrap;cursor:pointer;user-select:none}
+.card.collapsed h2{margin-bottom:0;padding-bottom:0;border-bottom:0}
+[data-theme="dark"] .card h2{color:#93c5fd;border-bottom-color:#334155}
+.card h2::before{content:"";width:5px;height:20px;border-radius:4px;background:var(--accent);display:inline-block}
+.card.wood-card h2::before{background:var(--wood)}
+.card.wood-card.included h2::before{background:var(--green)}
+.card h2 .icon{font-size:1.05rem}
+.card h2 .collapse-icon{margin-inline-start:auto;font-size:.7rem;color:var(--muted);transition:.2s}
+.card.collapsed h2 .collapse-icon{transform:rotate(-90deg)}
+.card.wood-card h2{color:var(--wood)}
+[data-theme="dark"] .card.wood-card h2{color:var(--wood)}
+.card.wood-card.included h2{color:var(--green)}
+[data-theme="dark"] .card.wood-card.included h2{color:#86efac}
+.card-body{padding-top:2px}
+
+.toggle-wrap{display:inline-flex;align-items:center;gap:8px;margin-inline-start:auto;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:5px 11px;cursor:pointer;user-select:none;font-size:.72rem;font-weight:800;color:var(--muted);transition:.18s;-webkit-tap-highlight-color:transparent}
+.toggle-wrap:hover{border-color:var(--wood);background:#fffbea}
+.toggle-wrap.active{background:#f0fdf4;border-color:var(--green);color:var(--green)}
+.toggle-wrap.purple:hover{border-color:var(--purple);background:#f5f3ff}
+.toggle-wrap.purple.active{background:#f5f3ff;border-color:var(--purple);color:var(--purple)}
+.toggle-switch{position:relative;width:32px;height:18px;background:#cbd5e1;border-radius:9px;transition:.2s;flex-shrink:0}
+.toggle-switch::after{content:'';position:absolute;top:2px;inset-inline-start:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-wrap.active .toggle-switch{background:var(--green)}
+.toggle-wrap.active .toggle-switch::after{inset-inline-start:16px}
+.toggle-wrap.purple.active .toggle-switch{background:var(--purple)}
+
+.hint{font-size:.72rem;color:var(--muted);margin-bottom:12px;font-weight:600;padding-right:14px;line-height:1.7}
+.hint.wood-hint{color:var(--wood);background:var(--wood-bg);border-radius:8px;padding:8px 12px;border:1px solid var(--wood-border);transition:.2s}
+.hint.wood-hint.active{color:var(--green);background:#f0fdf4;border-color:#bbf7d0}
+.hint.partner-hint{color:var(--purple);background:#f5f3ff;border-radius:8px;padding:8px 12px;border:1px solid #ddd6fe}
+[data-theme="dark"] .hint.partner-hint{color:#c4b5fd;background:#2e1065;border-color:#7c3aed}
+
+.formula-help{margin-bottom:12px;border:1.5px dashed #bfdbfe;border-radius:10px;background:linear-gradient(135deg,#eff6ff,#f8fbff);padding:0;overflow:hidden}
+.formula-help summary{padding:9px 14px;cursor:pointer;font-weight:800;color:var(--primary-2);font-size:.78rem;list-style:none;display:flex;align-items:center;gap:7px;user-select:none}
+.formula-help summary::-webkit-details-marker{display:none}
+.formula-help summary::before{content:'▸';transition:.2s;display:inline-block}
+.formula-help[open] summary::before{transform:rotate(90deg)}
+.formula-help summary:hover{background:#dbeafe}
+.formula-help .examples{padding:0 14px 12px;font-size:.74rem;line-height:1.9;color:var(--text)}
+.formula-help .examples code{background:#fff;border:1px solid #bfdbfe;border-radius:5px;padding:1px 7px;font-family:'Courier New',monospace;font-size:.76rem;color:#1d4e7c;direction:ltr;display:inline-block;margin:0 2px}
+.formula-help .examples .ex-row{display:flex;gap:8px;align-items:flex-start;padding:4px 0;border-bottom:1px dashed #dbeafe}
+.formula-help .examples .ex-row:last-child{border-bottom:0}
+.formula-help .examples .ex-row b{color:var(--primary-2);font-weight:800;white-space:nowrap}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:.76rem;font-weight:700;color:var(--muted)}
+input,textarea,select{font-family:inherit;font-size:.9rem;color:var(--text);border:1.5px solid var(--border);border-radius:9px;padding:9px 11px;background:var(--input-bg);transition:.15s;width:100%}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--primary-2);background:#fff;box-shadow:0 0 0 3px rgba(29,78,124,.12)}
+input[type=number]{text-align:left;direction:ltr}
+input[type=date]{direction:ltr;text-align:right}
+textarea{resize:vertical;min-height:50px;line-height:1.6}
+.tbl-wrap{overflow-x:auto;border-radius:11px;border:1px solid var(--border);margin-bottom:10px}
+.card.wood-card .tbl-wrap{border-color:var(--wood-border)}
+.card.wood-card.included .tbl-wrap{border-color:#bbf7d0}
+table{width:100%;border-collapse:collapse;min-width:520px}
+thead th{background:var(--primary);color:#fff;font-size:.76rem;font-weight:700;padding:10px 8px;text-align:center;white-space:nowrap}
+[data-theme="dark"] thead th{background:#0f172a}
+.card.wood-card thead th{background:var(--wood)}
+.card.wood-card.included thead th{background:var(--green)}
+thead th:first-child{text-align:center;padding:10px 4px;width:34px}
+tbody td{padding:6px;border-bottom:1px solid var(--border);text-align:center}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fbfcfe}
+tbody td:first-child{text-align:center;padding:6px 4px}
+tbody td:nth-child(2){text-align:right}
+tbody td input{border-color:transparent;background:transparent;padding:7px 9px;font-size:.86rem}
+tbody td input:hover{background:#f1f5f9;border-color:var(--border)}
+tbody td input:focus{background:#fff}
+td input[data-field=desc]{text-align:right}
+td input[data-field=notes]{text-align:right;font-size:.78rem;color:var(--muted);font-style:italic}
+td input[data-field=notes]::placeholder{font-size:.7rem}
+.row-total{font-weight:800;color:var(--primary);font-size:.88rem;direction:ltr;padding:0 8px;white-space:nowrap}
+[data-theme="dark"] .row-total{color:#93c5fd}
+.row-net{font-weight:800;font-size:.88rem;direction:ltr;padding:0 8px;white-space:nowrap}
+.row-num{color:var(--muted);font-weight:800;font-size:.76rem;direction:ltr;user-select:none}
+.row-actions{display:flex;gap:2px;justify-content:center}
+.del,.dup{background:transparent;border:0;cursor:pointer;color:#cbd5e1;font-size:.9rem;line-height:1;padding:6px 7px;border-radius:7px;transition:.15s}
+.del:hover{background:#fee2e2;color:var(--red)}
+.dup:hover{background:#dbeafe;color:var(--primary-2)}
+.empty-state{text-align:center;padding:26px 14px;color:var(--muted);font-size:.8rem;font-weight:600}
+.empty-state::before{content:'📋';display:block;font-size:2.2rem;margin-bottom:8px;opacity:.55}
+.add-row{background:transparent;border:1.5px dashed #b8c6d8;color:var(--primary-2);font-family:inherit;font-weight:700;font-size:.8rem;padding:9px 16px;border-radius:10px;cursor:pointer;transition:.15s;width:100%}
+.add-row:hover{background:#eff6ff;border-color:var(--primary-2)}
+.card.wood-card .add-row{border-color:var(--wood-border);color:var(--wood)}
+.card.wood-card .add-row:hover{background:var(--wood-bg);border-color:var(--wood)}
+.card.wood-card.included .add-row{border-color:#bbf7d0;color:var(--green)}
+.subtotal{display:flex;justify-content:space-between;align-items:center;margin-top:11px;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#f0f7ff,#f8fbff);border:1px solid #dbeafe;font-weight:700;font-size:.88rem;color:var(--primary)}
+.subtotal b{font-size:1rem;direction:ltr}
+.subtotal.green{background:linear-gradient(90deg,#f0fdf4,#f8fff9);border-color:#bbf7d0;color:var(--green)}
+.subtotal.wood{background:linear-gradient(90deg,#fffbeb,#fef9c3);border-color:var(--wood-border);color:var(--wood)}
+.subtotal.purple{background:linear-gradient(90deg,#f5f3ff,#ede9fe);border-color:#ddd6fe;color:var(--purple)}
+.card.wood-card.included .subtotal.wood{background:linear-gradient(90deg,#f0fdf4,#dcfce7);border-color:#bbf7d0;color:var(--green)}
+.auto-wood-note{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;padding:8px 14px;border-radius:10px;background:linear-gradient(90deg,#f0fdf4,#dcfce7);border:1.5px dashed #86efac;font-weight:800;font-size:.78rem;color:var(--green)}
+.auto-wood-note b{direction:ltr;font-size:.9rem;font-weight:800}
+.wood-payment-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.wood-payment-grid .w-item{background:#fff;border:1.5px solid var(--wood-border);border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:4px;text-align:center;transition:.2s}
+.wood-payment-grid .w-item span{color:var(--wood);font-weight:800;font-size:.7rem}
+.wood-payment-grid .w-item b{color:var(--wood);font-weight:800;direction:ltr;font-size:.9rem;padding:3px 0}
+.wood-payment-grid .w-item input[type=number]{text-align:center;font-size:.86rem;padding:6px 8px;background:#fffbeb;border-color:var(--wood-border)}
+.wood-payment-grid .w-item.remaining{background:#f0fdf4;border-color:#bbf7d0}
+.wood-payment-grid .w-item.remaining span,.wood-payment-grid .w-item.remaining b{color:var(--green)}
+.wood-payment-grid .w-item.remaining.neg{background:#fef2f2;border-color:#fecaca}
+.wood-payment-grid .w-item.remaining.neg span,.wood-payment-grid .w-item.remaining.neg b{color:var(--red)}
+.card.wood-card.included .wood-payment-grid .w-item{border-color:#bbf7d0}
+.card.wood-card.included .wood-payment-grid .w-item span,.card.wood-card.included .wood-payment-grid .w-item b{color:var(--green)}
+td.labor-cell{padding:5px}
+td.labor-cell .labor-wrap{display:flex;flex-direction:column;gap:2px;min-width:100px}
+td.labor-cell input[data-field=laborInput]{text-align:center;direction:ltr;font-family:'Courier New',monospace;font-size:.8rem;padding:6px 8px;min-width:95px;background:#f0f9ff;border-color:#bfdbfe;transition:.15s}
+td.labor-cell input[data-field=laborInput]:focus{background:#fff;border-color:var(--primary-2);box-shadow:0 0 0 3px rgba(29,78,124,.12)}
+td.labor-cell input[data-field=laborInput].invalid{background:#fef2f2;border-color:#fecaca}
+.formula-result{font-size:.66rem;color:var(--muted);font-weight:800;direction:ltr;text-align:center;font-family:'Courier New',monospace;padding:1px 0}
+.formula-result.invalid{color:var(--red)}
+.formula-result b{color:var(--primary)}
+.concrete-split{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.concrete-split .s{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:8px 9px;text-align:center;font-size:.72rem}
+.concrete-split .s span{color:var(--muted);font-weight:700;display:block;margin-bottom:2px}
+.concrete-split .s b{color:var(--primary);font-weight:800;direction:ltr;font-size:.86rem}
+[data-theme="dark"] .concrete-split .s b{color:#93c5fd}
+.concrete-split .s.value b{color:var(--primary-2)}
+.concrete-split .s.net b{color:var(--green)}
+.concrete-split .s.net.neg b{color:var(--red)}
+
+.results{background:linear-gradient(180deg,#fff,#f7fafd)}
+.breakdown{display:flex;flex-direction:column;gap:2px;margin-bottom:16px}
+.brow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:.88rem}
+.brow:nth-child(odd){background:#f8fafc}
+.brow span{color:var(--muted);font-weight:600}
+.brow b{direction:ltr;font-weight:800;color:var(--text)}
+.brow.total{background:#fff1f2;border:1px solid #fecdd3;margin-top:4px}
+.brow.total span{color:var(--red)}
+.brow.total b{color:var(--red);font-size:1.02rem}
+.brow.wood-separate{background:linear-gradient(90deg,#fffbeb,#fef3c7);border:1.5px solid var(--wood-border);margin:8px 0;padding:11px 12px;transition:.2s}
+.brow.wood-separate.included{background:linear-gradient(90deg,#f0fdf4,#dcfce7);border-color:#bbf7d0}
+.brow.wood-separate span{color:var(--wood);font-weight:800}
+.brow.wood-separate b{color:var(--wood);font-size:1.02rem}
+.brow.wood-separate.included span,.brow.wood-separate.included b{color:var(--green)}
+.brow.wood-separate .note-small{display:block;font-size:.66rem;color:#92400e;font-weight:600;opacity:.85;margin-top:1px}
+.brow.wood-separate.included .note-small{color:#166534}
+.brow.partner-row{background:linear-gradient(90deg,#f5f3ff,#ede9fe);border:1.5px solid #ddd6fe;margin:4px 0;padding:11px 12px}
+.brow.partner-row span{color:var(--purple);font-weight:800}
+.brow.partner-row b{color:var(--purple);font-size:1.02rem}
+.brow.partner-row .note-small{display:block;font-size:.66rem;color:#6d28d9;font-weight:600;opacity:.85;margin-top:1px}
+.brow.sub-note{padding:6px 12px 6px 28px;font-size:.76rem;background:linear-gradient(90deg,#f0fdf4,#f8fff9);border:1px dashed #86efac;margin-top:2px}
+.brow.sub-note span,.brow.sub-note b{color:var(--green)}
+.brow.sub-note b{font-size:.86rem}
+.section-title{margin-top:14px;font-weight:800;color:var(--primary-2);font-size:.82rem;padding:0 4px;display:flex;align-items:center;gap:6px}
+[data-theme="dark"] .section-title{color:#93c5fd}
+.section-title.purple{color:var(--purple)}
+[data-theme="dark"] .section-title.purple{color:#c4b5fd}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:4px}
+.kpi{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:14px 12px;text-align:center;display:flex;flex-direction:column;gap:5px}
+.kpi span{font-size:.74rem;font-weight:700;color:var(--muted)}
+.kpi b{font-size:1.1rem;font-weight:800;color:var(--primary);direction:ltr;word-break:break-word}
+[data-theme="dark"] .kpi b{color:#93c5fd}
+.kpi.profit{border-color:#bbf7d0;background:linear-gradient(180deg,#f0fdf4,#fff)}
+.kpi.profit b{color:var(--green)}
+.kpi.profit.neg{border-color:#fecaca;background:linear-gradient(180deg,#fef2f2,#fff)}
+.kpi.profit.neg b{color:var(--red)}
+.kpi.contract{border-color:#bfdbfe;background:linear-gradient(180deg,#eff6ff,#fff)}
+.kpi.contract b{color:var(--primary-2)}
+.kpi.received{border-color:#bbf7d0;background:linear-gradient(180deg,#f0fdf4,#fff)}
+.kpi.received b{color:var(--green)}
+.kpi.value{border-color:#bfdbfe;background:linear-gradient(180deg,#eff6ff,#fff)}
+.kpi.value b{color:var(--primary-2)}
+.kpi.partner{border-color:#ddd6fe;background:linear-gradient(180deg,#f5f3ff,#fff)}
+.kpi.partner b{color:var(--purple)}
+
+.progress-wrap{display:flex;flex-direction:column;gap:10px;margin-top:14px;padding:12px;background:var(--soft);border-radius:12px}
+[data-theme="dark"] .progress-wrap{background:#0f172a}
+.progress-label{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:5px}
+.progress-label b{color:var(--primary);font-weight:900;direction:ltr}
+[data-theme="dark"] .progress-label b{color:#93c5fd}
+.progress-track{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;position:relative}
+[data-theme="dark"] .progress-track{background:#334155}
+.progress-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.3,1);background:linear-gradient(90deg,var(--primary-2),var(--accent))}
+.progress-fill.green{background:linear-gradient(90deg,#16a34a,#22c55e)}
+.progress-fill.warn{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.progress-fill.danger{background:linear-gradient(90deg,#dc2626,#ef4444)}
+.progress-fill.purple{background:linear-gradient(90deg,#7c3aed,#8b5cf6)}
+
+.chart-wrap{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;margin:14px 0;padding:14px;background:var(--soft);border-radius:14px}
+[data-theme="dark"] .chart-wrap{background:#0f172a}
+.donut-chart{position:relative;width:150px;height:150px;flex:0 0 auto}
+.donut-chart svg{width:100%;height:100%;transform:rotate(-90deg)}
+.donut-chart circle{fill:none;stroke-width:26;transition:stroke-dasharray .6s ease,stroke-dashoffset .6s ease}
+.donut-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:10px}
+.donut-center .dc-label{font-size:.65rem;font-weight:700;color:var(--muted);margin-bottom:2px}
+.donut-center .dc-val{font-size:.85rem;font-weight:900;color:var(--primary);direction:ltr;line-height:1.1}
+[data-theme="dark"] .donut-center .dc-val{color:#93c5fd}
+.legend{display:flex;flex-direction:column;gap:7px;min-width:0}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700}
+.legend-dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+.legend-name{flex:1;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.legend-val{font-weight:900;color:var(--text);direction:ltr;font-size:.75rem;white-space:nowrap}
+.legend-pct{font-size:.7rem;color:var(--muted);direction:ltr;width:36px;text-align:left;white-space:nowrap}
+
+.alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.alert-card{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:11px;font-size:.82rem;font-weight:700;border:1.5px solid transparent;animation:slideDown .3s ease}
+.alert-card.warn{background:#fef3c7;border-color:#fde68a;color:#92400e}
+.alert-card.danger{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.alert-card.success{background:#f0fdf4;border-color:#bbf7d0;color:#15803d}
+.alert-card.partner{background:#f5f3ff;border-color:#ddd6fe;color:#6d28d9}
+.alert-card .ico{font-size:1.1rem;flex:0 0 auto}
+.alert-card .msg{flex:1;line-height:1.4}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.stat-tile{background:var(--soft);border:1px solid var(--border);border-radius:10px;padding:10px 12px;text-align:center}
+[data-theme="dark"] .stat-tile{background:#0f172a;border-color:#334155}
+.stat-tile span{display:block;font-size:.68rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.stat-tile b{font-size:.9rem;font-weight:900;color:var(--primary);direction:ltr}
+[data-theme="dark"] .stat-tile b{color:#93c5fd}
+
+.note{text-align:center;font-size:.72rem;color:var(--muted);padding:4px 10px 12px}
+#save-status{color:var(--green);font-weight:700}
+.save-info{background:linear-gradient(135deg,#eff6ff,#f8fbff);border:1.5px solid #bfdbfe;border-radius:12px;padding:12px 14px;font-size:.78rem;line-height:1.7;color:var(--primary)}
+.save-info b{color:var(--primary-2)}
+.save-info .row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px}
+.save-info .row:last-child{margin-bottom:0}
+.save-info .badge{background:#fff;border:1px solid #bfdbfe;border-radius:6px;padding:1px 8px;font-family:monospace;font-size:.7rem;color:#1d4e7c;direction:ltr;white-space:nowrap}
+
+.sticky-summary{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(90deg,#12304f,#1d4e7c);color:#fff;padding:10px 14px;z-index:99;display:none;justify-content:space-around;gap:6px;box-shadow:0 -6px 20px rgba(0,0,0,.4);border-top:2px solid var(--accent);transition:transform .3s cubic-bezier(.2,.8,.3,1)}
+.sticky-summary.show{display:flex}
+.sticky-summary .ss-item{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:80px;flex:1;font-size:.65rem;text-align:center}
+.sticky-summary .ss-item span{opacity:.8;font-weight:700;white-space:nowrap}
+.sticky-summary .ss-item b{font-size:.84rem;font-weight:800;direction:ltr;white-space:nowrap}
+.sticky-summary .ss-item.profit b{color:#86efac}
+.sticky-summary .ss-item.profit.neg b{color:#fca5a5}
+.sticky-summary .ss-item.contract b{color:#93c5fd}
+
+.toast-wrap{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;padding-bottom:70px}
+.toast{background:#12304f;color:#fff;padding:11px 22px;border-radius:12px;font-size:.82rem;font-weight:700;box-shadow:0 12px 32px -12px rgba(0,0,0,.55);display:flex;align-items:center;gap:8px;white-space:nowrap;max-width:90vw;pointer-events:auto;animation:toastIn .25s ease}
+.toast.ok{background:linear-gradient(135deg,#16a34a,#15803d)}
+.toast.err{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.toast.info{background:linear-gradient(135deg,#1d4e7c,#12304f)}
+.toast.out{opacity:0;transform:translateY(10px);transition:.25s}
+.toast .undo-btn{text-decoration:underline;margin-inline-start:10px;font-weight:800;cursor:pointer;padding:2px 8px;background:rgba(255,255,255,.2);border-radius:4px}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:9998;opacity:0;pointer-events:none;transition:.2s;backdrop-filter:blur(2px)}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.95);background:var(--card);border-radius:18px;padding:22px;z-index:9999;width:min(480px,92vw);max-height:85vh;overflow-y:auto;opacity:0;pointer-events:none;transition:.25s cubic-bezier(.2,.8,.3,1);box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.modal-header h3{margin:0;font-size:1.05rem;font-weight:900;color:var(--primary)}
+[data-theme="dark"] .modal-header h3{color:#93c5fd}
+.modal-close{background:transparent;border:0;font-size:1.2rem;cursor:pointer;color:var(--muted);padding:4px 9px;border-radius:8px;line-height:1}
+.modal-close:hover{background:var(--soft);color:var(--red)}
+.modal-body{font-size:.86rem;line-height:1.7;color:var(--text)}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.modal-footer button{padding:9px 18px;border-radius:10px;font-family:inherit;font-weight:800;font-size:.85rem;cursor:pointer;border:0;transition:.15s}
+.modal-footer .btn-cancel{background:var(--soft);color:var(--text)}
+.modal-footer .btn-cancel:hover{background:#e2e8f0}
+.modal-footer .btn-confirm{background:var(--red);color:#fff}
+.modal-footer .btn-confirm:hover{filter:brightness(1.1)}
+.modal-footer .btn-primary{background:var(--primary-2);color:#fff}
+.modal-footer .btn-primary:hover{filter:brightness(1.1)}
+.templates-list{display:flex;flex-direction:column;gap:8px}
+.template-item{display:flex;align-items:center;gap:12px;background:var(--soft);border:1.5px solid var(--border);border-radius:11px;padding:12px;cursor:pointer;transition:.15s}
+.template-item:hover{border-color:var(--primary-2);background:#eff6ff}
+[data-theme="dark"] .template-item{background:#0f172a;border-color:#334155}
+[data-theme="dark"] .template-item:hover{background:#172554;border-color:#3b82f6}
+.template-icon{font-size:1.5rem;flex:0 0 auto;width:38px;text-align:center}
+.template-info{flex:1;min-width:0}
+.template-name{font-weight:800;font-size:.9rem;margin-bottom:2px;color:var(--text)}
+.template-desc{font-size:.75rem;color:var(--muted);font-weight:600}
+.help-grid{display:flex;flex-direction:column;gap:10px}
+.help-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:.82rem}
+.help-item:last-child{border-bottom:0}
+.help-key{background:var(--soft);border:1.5px solid var(--border);border-radius:6px;padding:3px 8px;font-family:'Courier New',monospace;font-size:.75rem;font-weight:800;color:var(--primary-2);min-width:70px;text-align:center;flex:0 0 auto}
+[data-theme="dark"] .help-key{background:#0f172a;color:#93c5fd;border-color:#334155}
+.help-desc{color:var(--muted);font-weight:600;line-height:1.5}
+.backup-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--soft);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:.15s}
+.backup-item:hover{border-color:var(--primary-2);background:#eff6ff}
+[data-theme="dark"] .backup-item{background:#0f172a;border-color:#334155}
+[data-theme="dark"] .backup-item:hover{background:#172554}
+.backup-info{flex:1;min-width:0}
+.backup-name{font-weight:800;font-size:.82rem;margin-bottom:2px}
+.backup-time{font-size:.7rem;color:var(--muted);font-weight:600;direction:ltr;text-align:left}
+
+/* AUTH SCREEN */
+.auth-screen{position:fixed;inset:0;z-index:10000;background:linear-gradient(135deg,#12304f,#1d4e7c);display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.auth-screen.show{display:flex}
+.auth-card{background:#fff;border-radius:22px;padding:34px 28px;width:min(420px,100%);box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:authIn .4s cubic-bezier(.2,.8,.3,1)}
+@keyframes authIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+.auth-logo{font-size:3rem;text-align:center;margin-bottom:6px}
+.auth-title{text-align:center;font-size:1.2rem;font-weight:900;color:#12304f;margin-bottom:4px}
+.auth-title span{color:#f59e0b}
+.auth-subtitle{text-align:center;font-size:.82rem;color:#64748b;margin-bottom:22px;font-weight:700}
+.auth-field{margin-bottom:14px;display:flex;flex-direction:column;gap:5px}
+.auth-field label{font-size:.76rem;font-weight:800;color:#475569}
+.auth-field input{font-family:inherit;font-size:.95rem;padding:11px 13px;border:1.5px solid #e2e8f0;border-radius:10px;background:#f8fafc;transition:.15s;color:#1e293b;width:100%}
+.auth-field input:focus{outline:0;border-color:#1d4e7c;background:#fff;box-shadow:0 0 0 3px rgba(29,78,124,.12)}
+.auth-error{color:#dc2626;font-size:.78rem;font-weight:700;text-align:center;min-height:20px;margin-bottom:6px;padding:0 6px}
+.auth-submit{width:100%;padding:13px;border:0;border-radius:11px;background:linear-gradient(135deg,#12304f,#1d4e7c);color:#fff;font-family:inherit;font-size:.95rem;font-weight:800;cursor:pointer;transition:.18s}
+.auth-submit:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.auth-footer{text-align:center;font-size:.7rem;color:#94a3b8;margin-top:20px;padding-top:16px;border-top:1px dashed #e2e8f0;font-weight:600}
+[data-theme="dark"] .auth-card{background:#1e293b}
+[data-theme="dark"] .auth-title{color:#93c5fd}
+[data-theme="dark"] .auth-subtitle{color:#94a3b8}
+[data-theme="dark"] .auth-field label{color:#cbd5e1}
+[data-theme="dark"] .auth-field input{background:#0f172a;color:#e2e8f0;border-color:#334155}
+[data-theme="dark"] .auth-field input:focus{background:#0f172a;border-color:#3b82f6}
+[data-theme="dark"] .auth-footer{border-top-color:#334155;color:#64748b}
+
+/* USERS MANAGER */
+.users-list{display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto}
+.user-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--soft);border:1.5px solid var(--border);border-radius:11px;transition:.15s}
+.user-item:hover{border-color:var(--primary-2)}
+.user-item.inactive{opacity:.6;filter:grayscale(.3)}
+[data-theme="dark"] .user-item{background:#0f172a;border-color:#334155}
+.user-item-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#12304f,#1d4e7c);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.95rem;flex-shrink:0}
+.user-item-info{flex:1;min-width:0}
+.user-item-name{font-weight:800;font-size:.88rem;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-item-meta{font-size:.7rem;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-item-actions{display:flex;gap:2px}
+.uib{background:transparent;border:0;cursor:pointer;font-size:.9rem;padding:6px 8px;border-radius:7px;transition:.15s;color:var(--muted)}
+.uib:hover{background:#dbeafe;color:var(--primary-2)}
+.uib.danger:hover{background:#fee2e2;color:var(--red)}
+
+/* BUDGET */
+.budget-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.bs-item{background:var(--soft);border:1.5px solid var(--border);border-radius:12px;padding:12px;text-align:center;transition:.2s}
+.bs-item span{display:block;font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+.bs-item b{font-size:1.05rem;font-weight:900;color:var(--primary);direction:ltr}
+.bs-item.total{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border-color:#ddd6fe}
+.bs-item.total b{color:var(--purple)}
+.bs-item.paid{background:linear-gradient(135deg,#f0fdf4,#f8fff9);border-color:#bbf7d0}
+.bs-item.paid b{color:var(--green)}
+.bs-item.remain{background:linear-gradient(135deg,#fef3c7,#fffbeb);border-color:#fde68a}
+.bs-item.remain b{color:#92400e}
+.bs-item.remain.neg{background:linear-gradient(135deg,#fef2f2,#fff);border-color:#fecaca}
+.bs-item.remain.neg b{color:var(--red)}
+[data-theme="dark"] .bs-item{background:var(--card);border-color:var(--border)}
+[data-theme="dark"] .bs-item b{color:#93c5fd}
+[data-theme="dark"] .bs-item.total{background:linear-gradient(135deg,#2e1065,#1e293b);border-color:#7c3aed}
+[data-theme="dark"] .bs-item.total b{color:#c4b5fd}
+[data-theme="dark"] .bs-item.paid{background:linear-gradient(135deg,#052e16,#1e293b);border-color:#166534}
+[data-theme="dark"] .bs-item.paid b{color:#86efac}
+[data-theme="dark"] .bs-item.remain{background:linear-gradient(135deg,#3f2d0a,#4a3508);border-color:#78350f}
+[data-theme="dark"] .bs-item.remain b{color:#fbbf24}
+[data-theme="dark"] .bs-item.remain.neg{background:linear-gradient(135deg,#7f1d1d,#4a1a1a);border-color:#991b1b}
+[data-theme="dark"] .bs-item.remain.neg b{color:#fca5a5}
+
+.budget-total-field{margin-top:14px;padding:12px;background:var(--soft);border-radius:12px;border:1.5px dashed var(--border)}
+.budget-total-field label{font-size:.78rem;font-weight:800;color:var(--muted);display:block;margin-bottom:8px}
+.budget-total-row{display:flex;gap:8px;flex-wrap:wrap}
+.budget-total-row input{flex:1;min-width:150px;padding:10px 12px;font-weight:800}
+.budget-total-row input:disabled{opacity:.7;cursor:not-allowed}
+.btn-budget-action{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;border:0;padding:10px 18px;border-radius:10px;font-family:inherit;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap;transition:.15s;display:flex;align-items:center;gap:5px}
+.btn-budget-action:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-budget-action:active{transform:scale(.97)}
+
+.budget-warning{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;background:linear-gradient(90deg,#fef3c7,#fffbeb);border:1.5px solid #fde68a;border-radius:10px;font-size:.78rem;font-weight:700;color:#92400e;animation:slideDown .3s ease}
+[data-theme="dark"] .budget-warning{background:linear-gradient(90deg,#3f2d0a,#4a3508);border-color:#78350f;color:#fbbf24}
+
+.budget-totals-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;padding:12px;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #ddd6fe;border-radius:12px}
+[data-theme="dark"] .budget-totals-row{background:linear-gradient(135deg,#2e1065,#1e293b);border-color:#7c3aed}
+.btr-item{text-align:center}
+.btr-item span{display:block;font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:3px}
+.btr-item b{font-size:.95rem;font-weight:900;color:var(--purple);direction:ltr}
+[data-theme="dark"] .btr-item b{color:#c4b5fd}
+.budget-actions-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:center}
+.btn-budget-mini{background:var(--soft);color:var(--text);border:1.5px solid var(--border);padding:7px 12px;border-radius:9px;font-family:inherit;font-size:.76rem;font-weight:800;cursor:pointer;transition:.15s}
+.btn-budget-mini:hover{background:#f5f3ff;border-color:var(--purple);color:var(--purple)}
+.btn-budget-mini.danger{color:var(--red);border-color:rgba(220,38,38,.3)}
+.btn-budget-mini.danger:hover{background:#fef2f2;border-color:var(--red)}
+.budget-card{border:1.5px solid #ddd6fe}
+[data-theme="dark"] .budget-card{border-color:#7c3aed}
+.budget-card h2{color:var(--purple)}
+[data-theme="dark"] .budget-card h2{color:#c4b5fd}
+.budget-card h2::before{background:var(--purple)}
+.budget-card thead th{background:var(--purple)}
+
+@media print{
+  @page{size:A4;margin:10mm}
+  body{background:#fff!important;color:#000!important;padding:0;font-size:10.5px;line-height:1.4}
+  .app{max-width:none;gap:8px}
+  .actions,.add-row,.del,.dup,.row-actions,.toast-wrap,.save-info,.hint,.toggle-wrap,.formula-help,.btn-theme,.btn-share,.btn-install,.sticky-summary,.empty-state,thead th:last-child,tbody td:last-child,#restore-file,.project-bar,.search-bar,.modal,.modal-overlay,.alerts,.progress-wrap,.chart-wrap,.stats-grid,.collapse-icon,.btn.undo,.btn.redo,.no-print,.auth-screen,.user-menu,.page-nav,.budget-actions-bar,.btn-budget-action{display:none!important}
+  header{padding:12px 16px;border-radius:10px;background:#12304f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  header h1{font-size:1rem}
+  .card{box-shadow:none;border:1px solid #cbd5e1;break-inside:avoid;margin-bottom:8px;padding:10px 12px;border-radius:8px;background:#fff!important}
+  .card.wood-card{border-color:#fde68a!important;background:#fffbeb!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .card.budget-card{border-color:#ddd6fe!important;background:#f5f3ff!important}
+  .card h2{font-size:.85rem;margin-bottom:6px;padding-bottom:6px;color:#12304f!important}
+  thead th{font-size:.65rem;padding:5px 3px}
+  tbody td{padding:2px;border-bottom:1px solid #e5e7eb}
+  tbody td input{border:0!important;background:transparent!important;padding:2px 3px!important;font-size:.72rem!important;box-shadow:none!important;color:#111!important}
+  td.labor-cell{padding:2px}
+  td.labor-cell input[data-field=laborInput]{font-size:.7rem!important;padding:1px!important}
+  .formula-result{font-size:.6rem!important;padding:0!important}
+  .row-total,.row-net{font-size:.72rem}
+  .subtotal{font-size:.76rem;padding:6px 10px;margin-top:5px}
+  .auto-wood-note{font-size:.7rem;padding:5px 8px;margin-top:4px;background:#dcfce7!important;border-color:#86efac!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .brow{font-size:.76rem;padding:5px 8px}
+  .kpis{grid-template-columns:repeat(3,1fr);gap:6px}
+  .kpi{padding:8px 6px;border-radius:8px}
+  .kpi span{font-size:.64rem}.kpi b{font-size:.84rem}
+  .breakdown{margin-bottom:10px;gap:0}
+}
+
+@media(max-width:700px){
+  header h1{font-size:1.02rem}.card{padding:14px}.kpi b{font-size:1rem}
+  .btn{font-size:.72rem;padding:7px 9px}
+  .project-bar,.search-bar{padding:8px 10px}
+  .chart-wrap{grid-template-columns:1fr;gap:14px}
+  .donut-chart{width:120px;height:120px;margin:0 auto}
+  .concrete-split{grid-template-columns:1fr 1fr}
+  .concrete-split .s:last-child{grid-column:1 / -1}
+  .wood-payment-grid{grid-template-columns:1fr 1fr}
+  .wood-payment-grid .w-item.remaining{grid-column:1 / -1}
+  .sticky-summary{padding:8px}
+  .sticky-summary .ss-item{font-size:.58rem;min-width:60px}
+  .sticky-summary .ss-item b{font-size:.74rem}
+  .sticky-summary .ss-item:nth-child(2){display:none}
+  .app{padding-bottom:70px}
+  .modal{padding:18px;border-radius:14px}
+  .user-name{display:none}
+  .budget-summary{grid-template-columns:1fr 1fr}
+  .budget-summary .bs-item:nth-child(3){grid-column:1 / -1}
+  .budget-totals-row{grid-template-columns:1fr;gap:6px}
+  .budget-total-row{flex-direction:column}
+  .nav-tab{font-size:.78rem;padding:8px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Auth Screen -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">🏗️</div>
+    <h1 class="auth-title">حاسبة <span>مقاولات الخرسانة</span></h1>
+    <p class="auth-subtitle" id="auth-subtitle">سجل الدخول للمتابعة</p>
+    <form id="auth-form" autocomplete="on">
+      <div class="auth-field" id="field-fullname" style="display:none">
+        <label>الاسم الكامل</label>
+        <input id="auth-fullname" type="text" autocomplete="name" placeholder="مثال: أحمد محمد">
+      </div>
+      <div class="auth-field">
+        <label>اسم المستخدم</label>
+        <input id="auth-username" type="text" required autocomplete="username" placeholder="username" dir="ltr" autocapitalize="off">
+      </div>
+      <div class="auth-field">
+        <label>كلمة المرور</label>
+        <input id="auth-password" type="password" required autocomplete="current-password" placeholder="••••••" dir="ltr">
+      </div>
+      <div class="auth-field" id="field-password2" style="display:none">
+        <label>تأكيد كلمة المرور</label>
+        <input id="auth-password2" type="password" autocomplete="new-password" placeholder="••••••" dir="ltr">
+      </div>
+      <div class="auth-error" id="auth-error"></div>
+      <button type="submit" class="auth-submit" id="auth-submit">دخول</button>
+    </form>
+    <div class="auth-footer">🔒 البيانات محفوظة محلياً على جهازك فقط</div>
+  </div>
+</div>
+
+<div class="app">
+  <header>
+    <h1>🏗️ حاسبة <span>مقاولات الخرسانة</span></h1>
+    <div class="user-menu">
+      <span class="user-avatar" id="user-avatar">👤</span>
+      <span class="user-name" id="user-name">—</span>
+      <button class="btn btn-light" onclick="showUsersManager()" id="users-admin-btn" style="display:none" title="إدارة المستخدمين">👥</button>
+      <button class="btn btn-light" onclick="logout()" title="تسجيل الخروج">🚪</button>
+    </div>
+    <div class="actions">
+      <button class="btn undo" id="undo-btn" onclick="doUndo()" title="تراجع (Ctrl+Z)" disabled>↶</button>
+      <button class="btn redo" id="redo-btn" onclick="doRedo()" title="إعادة (Ctrl+Y)" disabled>↷</button>
+      <button class="btn btn-theme" id="theme-btn" onclick="toggleTheme()" title="الوضع الليلي">🌙</button>
+      <button class="btn btn-share" onclick="shareSummary()">📤 مشاركة</button>
+      <button class="btn btn-install" id="install-btn" onclick="handleInstall()">📱 تثبيت</button>
+      <button class="btn btn-save" onclick="saveAsFile()">💾 حفظ</button>
+      <button class="btn btn-light" onclick="saveNow()">💾 سريع</button>
+      <button class="btn btn-light" onclick="exportExcel()">📊 Excel</button>
+      <button class="btn btn-light" onclick="exportCSV()">📄 CSV</button>
+      <button class="btn btn-light" onclick="pickRestore()">📤 استرجاع</button>
+      <button class="btn btn-light" onclick="showBackups()">🕐 نسخ</button>
+      <button class="btn btn-accent" onclick="printPage()">🖨️ طباعة</button>
+      <button class="btn btn-danger" onclick="resetAll()">🗑️ جديد</button>
+      <button class="btn btn-light" onclick="showHelp()" title="اختصارات">?</button>
+    </div>
+    <input type="file" id="restore-file" accept=".json,application/json" hidden onchange="restoreJSON(event)">
+  </header>
+
+  <!-- Page Navigation -->
+  <div class="page-nav">
+    <button class="nav-tab active" data-page="calculator" onclick="switchPage('calculator')">📊 الحاسبة</button>
+    <button class="nav-tab" data-page="budget" onclick="switchPage('budget')">💰 الميزانية</button>
+  </div>
+
+  <div class="project-bar">
+    <select class="project-select" id="project-select" onchange="switchProject(this.value)"></select>
+    <button class="project-btn" onclick="newProject()">➕ جديد</button>
+    <button class="project-btn" onclick="renameProject()">✏️ تسمية</button>
+    <button class="project-btn" onclick="cycleStatus()">🏷️ الحالة</button>
+    <button class="project-btn danger" onclick="deleteProject()">🗑️ حذف</button>
+    <span class="status-badge active" id="status-badge">نشط</span>
+  </div>
+
+  <!-- ============ PAGE: CALCULATOR ============ -->
+  <div class="page" id="page-calculator">
+    <div class="search-bar" id="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="search" id="search-input" placeholder="ابحث في كل البنود…" oninput="onSearch(this.value)">
+      <span class="search-count" id="search-count"></span>
+      <button class="clear-btn" onclick="clearSearch()">✕</button>
+    </div>
+
+    <div class="alerts" id="alerts"></div>
+
+    <section class="card" data-section="info">
+      <h2 onclick="toggleCollapse('info')"><span class="icon">📋</span> بيانات المشروع <span class="collapse-icon">▼</span></h2>
+      <div class="card-body">
+        <div class="grid">
+          <div class="field"><label>اسم المشروع</label><input id="p-name" placeholder="مثال: عمارة سكنية - الدور الثالث" oninput="onProjectField('name',this.value)"></div>
+          <div class="field"><label>اسم العميل</label><input id="p-client" placeholder="اسم العميل" oninput="onProjectField('client',this.value)"></div>
+          <div class="field"><label>التاريخ</label><input type="date" id="p-date" oninput="onProjectField('date',this.value)"></div>
+          <div class="field"><label>العملة</label><input id="p-currency" value="ج.م" oninput="onProjectField('currency',this.value)"></div>
+          <div class="field"><label>قيمة العقد</label><input type="number" id="p-contract" min="0" step="any" placeholder="0" oninput="onProjectField('contract',this.value)"></div>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label>📝 ملاحظات المشروع</label>
+          <textarea id="p-notes" placeholder="أي ملاحظات عامة…" oninput="onProjectField('notes',this.value)"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" data-section="received">
+      <h2 onclick="toggleCollapse('received')"><span class="icon">📥</span> المستلم من العميل <span class="collapse-icon">▼</span></h2>
+      <div class="card-body">
+        <div class="tbl-wrap"><table style="min-width:640px">
+          <thead><tr><th>#</th><th>البيان</th><th>التاريخ</th><th>المبلغ</th><th>ملاحظات</th><th></th></tr></thead>
+          <tbody id="received-body"></tbody>
+        </table></div>
+        <button class="add-row" onclick="addRow('received')">+ إضافة دفعة مستلمة</button>
+        <div class="subtotal green"><span>إجمالي المستلم من العميل</span><b id="received-total">0</b></div>
+      </div>
+    </section>
+
+    <section class="card wood-card" id="wood-card" data-section="wood">
+      <h2 onclick="toggleCollapse('wood')">
+        <span class="icon">🪵</span> تكلفة الخشب
+        <div class="toggle-wrap" id="wood-include-toggle" onclick="event.stopPropagation();toggleWoodInclude()">
+          <div class="toggle-switch"></div>
+          <span id="wood-toggle-label">غير محتسبة</span>
+        </div>
+        <span class="collapse-icon">▼</span>
+      </h2>
+      <div class="card-body">
+        <p class="hint wood-hint" id="wood-hint">⚠️ تكلفة الخشب معروضة بشكل منفصل -- <b>لا تدخل في إجمالي التكاليف ولا في حساب الربح</b>.</p>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>#</th><th>البيان</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>ملاحظات</th><th></th></tr></thead>
+          <tbody id="wood-body"></tbody>
+        </table></div>
+        <button class="add-row" onclick="addRow('wood')">+ إضافة بند خشب</button>
+        <div class="subtotal wood"><span id="wood-subtotal-label">إجمالي تكلفة الخشب (منفصلة)</span><b id="wood-total">0</b></div>
+        <div class="wood-payment-grid">
+          <div class="w-item"><span>💵 إجمالي الخشب</span><b id="wood-total-display">0</b></div>
+          <div class="w-item"><span>✅ المسدد من الخشب</span><input id="wood-paid-input" type="number" min="0" step="any" placeholder="0"></div>
+          <div class="w-item remaining" id="wood-remaining-item"><span>⏳ المتبقي</span><b id="wood-remaining-display">0</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" data-section="misc">
+      <h2 onclick="toggleCollapse('misc')"><span class="icon">🔩</span> المسامير والشامبر والبسكوت <span class="collapse-icon">▼</span></h2>
+      <div class="card-body">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>#</th><th>البيان</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>ملاحظات</th><th></th></tr></thead>
+          <tbody id="misc-body"></tbody>
+        </table></div>
+        <button class="add-row" onclick="addRow('misc')">+ إضافة بند</button>
+        <div class="subtotal"><span>إجمالي المسامير والشامبر والبسكوت</span><b id="misc-total">0</b></div>
+      </div>
+    </section>
+
+    <section class="card" data-section="concrete">
+      <h2 onclick="toggleCollapse('concrete')"><span class="icon">🧱</span> بنود الخرسانة <span class="collapse-icon">▼</span></h2>
+      <div class="card-body">
+        <p class="hint">💡 <b>الصنايعية</b> = رقم أو معادلة<br>💡 <b>قيمة الخرسانة</b> = كمية (م³) × سعر المتر<br>💡 <b>الصافي</b> = القيمة − الصنايعية</p>
+        <details class="formula-help">
+          <summary>🖩 أمثلة على معادلات الصنايعية</summary>
+          <div class="examples">
+            <div class="ex-row"><b>6300</b><div>رقم مباشر</div></div>
+            <div class="ex-row"><b><code>4*400*3</code></b><div>4 صنايعية × 400 × 3 أيام = <b>4,800</b></div></div>
+            <div class="ex-row"><b><code>4*400*3 + 2*250*3</code></b><div>= <b>6,300</b></div></div>
+            <div class="ex-row"><b><code>(4+2)*350*3</code></b><div>= <b>6,300</b></div></div>
+          </div>
+        </details>
+        <div class="tbl-wrap"><table style="min-width:820px">
+          <thead><tr><th>#</th><th>البند</th><th>الصنايعية</th><th>كمية (م³)</th><th>سعر المتر</th><th>قيمة الخرسانة</th><th>الصافي</th><th>ملاحظات</th><th></th></tr></thead>
+          <tbody id="concrete-body"></tbody>
+        </table></div>
+        <button class="add-row" onclick="addRow('concrete')">+ إضافة بند خرسانة</button>
+        <div class="subtotal"><span>إجمالي الصنايعية (تكلفة)</span><b id="concrete-total">0</b></div>
+        <div class="concrete-split">
+          <div class="s value"><span>قيمة الخرسانة</span><b id="concrete-value">0</b></div>
+          <div class="s net" id="concrete-net-box"><span>الصافي</span><b id="concrete-net">0</b></div>
+          <div class="s"><span>نسبة الربح</span><b id="concrete-margin">0%</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" data-section="transport">
+      <h2 onclick="toggleCollapse('transport')"><span class="icon">🚚</span> مصروفات نقل ومعدات <span class="collapse-icon">▼</span></h2>
+      <div class="card-body">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>#</th><th>البيان</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th><th>ملاحظات</th><th></th></tr></thead>
+          <tbody id="transport-body"></tbody>
+        </table></div>
+        <button class="add-row" onclick="addRow('transport')">+ إضافة بند نقل/معدات</button>
+        <div class="subtotal"><span>إجمالي مصروفات النقل والمعدات</span><b id="transport-total">0</b></div>
+      </div>
+    </section>
+
+    <section class="card" data-section="payments">
+      <h2 onclick="toggleCollapse('payments')"><span class="icon">💸</span> المدفوعات الكلية <span class="collapse-icon">▼</span></h2>
+      <div class="card-body">
+        <div class="tbl-wrap"><table style="min-width:640px">
+          <thead><tr><th>#</th><th>البيان</th><th>التاريخ</th><th>المبلغ</th><th>ملاحظات</th><th></th></tr></thead>
+          <tbody id="payments-body"></tbody>
+        </table></div>
+        <button class="add-row" onclick="addRow('payments')">+ إضافة دفعة / مصروف</button>
+        <div class="subtotal"><span id="payments-label">إجمالي المدفوعات</span><b id="payments-total">0</b></div>
+        <div class="auto-wood-note" id="auto-wood-note" style="display:none">
+          <span>✅ المسدد من الخشب (مضاف تلقائياً)</span><b id="auto-wood-paid">0</b>
+        </div>
+      </div>
+    </section>
+
+    <section class="card results" id="results-card" data-section="results">
+      <h2 onclick="toggleCollapse('results')"><span class="icon">📊</span> النتائج والحسابات <span class="collapse-icon">▼</span></h2>
+      <div class="card-body">
+        <div class="chart-wrap" id="chart-wrap">
+          <div class="donut-chart">
+            <svg viewBox="0 0 100 100" id="donut-svg">
+              <circle cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="26" fill="none"/>
+            </svg>
+            <div class="donut-center">
+              <div class="dc-label">إجمالي التكاليف</div>
+              <div class="dc-val" id="donut-total">0</div>
+            </div>
+          </div>
+          <div class="legend" id="chart-legend"></div>
+        </div>
+
+        <div class="breakdown">
+          <div class="brow"><span>المسامير والشامبر والبسكوت</span><b id="r-misc">0</b></div>
+          <div class="brow"><span>الصنايعية (الخرسانة)</span><b id="r-concrete">0</b></div>
+          <div class="brow"><span>مصروفات نقل ومعدات</span><b id="r-transport">0</b></div>
+          <div class="brow total"><span id="costs-label">إجمالي التكاليف (بدون خشب)</span><b id="r-costs">0</b></div>
+          <div class="brow wood-separate" id="wood-breakdown-row">
+            <span>🪵 تكلفة الخشب <span class="note-small" id="wood-breakdown-note">غير محتسبة</span></span>
+            <b id="r-wood">0</b>
+          </div>
+          <div class="brow"><span>✅ المسدد من الخشب</span><b id="r-wood-paid">0</b></div>
+          <div class="brow"><span>⏳ المتبقي من الخشب</span><b id="r-wood-remaining">0</b></div>
+          <div class="brow"><span id="payments-breakdown-label">المدفوعات الكلية</span><b id="r-payments">0</b></div>
+          <div class="brow sub-note" id="r-auto-wood-row" style="display:none">
+            <span>↳ منها المسدد من الخشب</span><b id="r-auto-wood-paid">0</b>
+          </div>
+          <div class="brow"><span>المتبقي من التكاليف</span><b id="r-remain">0</b></div>
+          <div class="brow partner-row" id="r-partner-row">
+            <span>👥 مدفوعات الشركاء <span class="note-small" id="r-partner-note">تمويل إضافي للمشروع</span></span>
+            <b id="r-partner-paid">0</b>
+          </div>
+          <div class="brow"><span>📥 المستلم من العميل</span><b id="r-received-row">0</b></div>
+        </div>
+
+        <div class="progress-wrap">
+          <div>
+            <div class="progress-label"><span>💸 تحصيل العقد من العميل</span><b id="pb-received-label">0%</b></div>
+            <div class="progress-track"><div class="progress-fill" id="pb-received" style="width:0%"></div></div>
+          </div>
+          <div>
+            <div class="progress-label"><span>✅ نسبة المدفوع من التكاليف</span><b id="pb-paid-label">0%</b></div>
+            <div class="progress-track"><div class="progress-fill" id="pb-paid" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="kpis">
+          <div class="kpi contract"><span>قيمة العقد</span><b id="r-contract">0</b></div>
+          <div class="kpi received"><span>المستلم من العميل</span><b id="r-received">0</b></div>
+          <div class="kpi" id="kpi-cash"><span>الرصيد النقدي</span><b id="r-cash">0</b></div>
+          <div class="kpi profit" id="kpi-profit"><span>صافي الربح</span><b id="r-profit">0</b></div>
+          <div class="kpi" id="kpi-margin"><span>نسبة الربح</span><b id="r-margin">0%</b></div>
+        </div>
+
+        <div class="section-title">🧱 تحليل الخرسانة</div>
+        <div class="kpis">
+          <div class="kpi value"><span>قيمة الخرسانة</span><b id="r-concrete-value">0</b></div>
+          <div class="kpi profit" id="kpi-concrete-net"><span>صافي الخرسانة</span><b id="r-concrete-net">0</b></div>
+          <div class="kpi" id="kpi-concrete-margin"><span>نسبة ربح الخرسانة</span><b id="r-concrete-margin">0%</b></div>
+        </div>
+
+        <div class="section-title purple">👥 الشركاء / الأفراد</div>
+        <div class="kpis">
+          <div class="kpi partner"><span>إجمالي الأنصبة</span><b id="r-partner-total">0</b></div>
+          <div class="kpi partner"><span>مدفوع الشركاء</span><b id="r-partner-paid-kpi">0</b></div>
+          <div class="kpi partner"><span>متبقي على الشركاء</span><b id="r-partner-remain">0</b></div>
+        </div>
+
+        <div class="section-title">📈 إحصائيات سريعة</div>
+        <div class="stats-grid">
+          <div class="stat-tile"><span>عدد البنود</span><b id="stat-items">0</b></div>
+          <div class="stat-tile"><span>متوسط البند</span><b id="stat-avg">0</b></div>
+          <div class="stat-tile"><span>أكبر بند</span><b id="stat-max">0</b></div>
+          <div class="stat-tile"><span>قيمة العقد/م²</span><b id="stat-per-m3">0</b></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="note"><span id="save-status">يتم الحفظ تلقائياً داخل المتصفح</span></div>
+  </div>
+  <!-- ============ END PAGE: CALCULATOR ============ -->
+
+  <!-- ============ PAGE: BUDGET ============ -->
+  <div class="page" id="page-budget" style="display:none">
+    <section class="card budget-card">
+      <h2><span class="icon">💰</span> ملخص الميزانية والشركاء</h2>
+      <p class="hint partner-hint">💡 عند الربط بقيمة العقد: إجمالي الميزانية = قيمة العقد، ومدفوعات الشركاء تُضاف كتمويل للمشروع في الرصيد النقدي.</p>
+
+      <div class="toggle-wrap purple" id="budget-link-toggle" onclick="toggleBudgetLink()" style="margin-bottom:14px;margin-inline-start:0;display:inline-flex">
+        <div class="toggle-switch"></div>
+        <span id="budget-link-label">غير مرتبط بالعقد</span>
+      </div>
+
+      <div class="budget-summary">
+        <div class="bs-item total"><span>💵 إجمالي الأنصبة</span><b id="bs-total-share">0</b></div>
+        <div class="bs-item paid"><span>✅ إجمالي المدفوع</span><b id="bs-total-paid">0</b></div>
+        <div class="bs-item remain" id="bs-remain-box"><span>⏳ إجمالي المتبقي</span><b id="bs-total-remain">0</b></div>
+      </div>
+
+      <div class="budget-total-field">
+        <label>🎯 إجمالي الميزانية (هدف التوزيع)</label>
+        <div class="budget-total-row">
+          <input type="number" id="budget-total-input" min="0" step="any" placeholder="0" oninput="onBudgetTotalChange(this.value)">
+          <button class="btn-budget-action" onclick="distributeEqually()">📊 توزيع متساوي</button>
+        </div>
+      </div>
+
+      <div class="budget-warning" id="budget-total-warning" style="display:none"></div>
+
+      <div class="budget-actions-bar">
+        <button class="btn-budget-mini" onclick="clearAllShares()">🧹 مسح كل الأنصبة</button>
+        <button class="btn-budget-mini" onclick="clearAllPaid()">🧹 مسح كل المدفوعات</button>
+        <button class="btn-budget-mini danger" onclick="clearAllBudget()">🗑️ حذف كل الأفراد</button>
+      </div>
+    </section>
+
+    <section class="card budget-card">
+      <h2><span class="icon">👥</span> أنصبة الأفراد</h2>
+      <div class="card-body">
+        <p class="hint">💡 <b>النصيب</b> = المبلغ المطلوب من الشخص | <b>دفع</b> = اللي دفعه فعلاً | <b>المتبقي</b> = النصيب − دفع</p>
+        <div class="tbl-wrap">
+          <table style="min-width:760px">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>الاسم</th>
+                <th>النصيب</th>
+                <th>دفع</th>
+                <th>المتبقي</th>
+                <th>ملاحظات</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="budget-body"></tbody>
+          </table>
+        </div>
+        <button class="add-row" onclick="addBudgetRow()">+ إضافة شخص</button>
+
+        <div class="budget-totals-row">
+          <div class="btr-item"><span>إجمالي الأنصبة</span><b id="budget-total-share">0</b></div>
+          <div class="btr-item"><span>إجمالي المدفوع</span><b id="budget-total-paid">0</b></div>
+          <div class="btr-item"><span>إجمالي المتبقي</span><b id="budget-total-remain">0</b></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- ============ END PAGE: BUDGET ============ -->
+</div>
+
+<div class="sticky-summary" id="sticky-summary">
+  <div class="ss-item contract"><span>العقد</span><b id="ss-contract">0</b></div>
+  <div class="ss-item"><span>التكاليف</span><b id="ss-costs">0</b></div>
+  <div class="ss-item profit" id="ss-profit-item"><span>الربح</span><b id="ss-profit">0</b></div>
+  <div class="ss-item"><span>المتبقي</span><b id="ss-remain">0</b></div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
+
+<div class="modal" id="confirm-modal">
+  <div class="modal-header">
+    <h3 id="confirm-title">تأكيد</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body"><p id="confirm-message"></p></div>
+  <div class="modal-footer">
+    <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
+    <button class="btn-confirm" id="confirm-yes">تأكيد</button>
+  </div>
+</div>
+
+<div class="modal" id="templates-modal">
+  <div class="modal-header">
+    <h3>📑 قوالب جاهزة</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <p style="margin-bottom:12px;color:var(--muted);font-size:.82rem">اختر قالب لإضافة بنود جاهزة (بالأسعار = 0، عدّلها لاحقاً)</p>
+    <div class="templates-list" id="templates-list"></div>
+  </div>
+</div>
+
+<div class="modal" id="help-modal">
+  <div class="modal-header">
+    <h3>⌨️ اختصارات لوحة المفاتيح</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="help-grid">
+      <div class="help-item"><span class="help-key">Ctrl+Z</span><span class="help-desc">تراجع عن آخر خطوة</span></div>
+      <div class="help-item"><span class="help-key">Ctrl+Y</span><span class="help-desc">إعادة الخطوة الملغاة</span></div>
+      <div class="help-item"><span class="help-key">Ctrl+Shift+Z</span><span class="help-desc">إعادة أيضاً</span></div>
+      <div class="help-item"><span class="help-key">Ctrl+S</span><span class="help-desc">حفظ سريع</span></div>
+      <div class="help-item"><span class="help-key">Enter</span><span class="help-desc">الانتقال للخلية التالية أو سطر جديد</span></div>
+      <div class="help-item"><span class="help-key">Tab</span><span class="help-desc">التنقل بين الحقول</span></div>
+      <div class="help-item"><span class="help-key">?</span><span class="help-desc">إظهار هذه القائمة</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="backups-modal">
+  <div class="modal-header">
+    <h3>🕐 النسخ الاحتياطية</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <p style="margin-bottom:12px;color:var(--muted);font-size:.82rem">آخر 5 نسخ محفوظة تلقائياً. اضغط على أي نسخة لاسترجاعها.</p>
+    <div id="backups-list"></div>
+  </div>
+</div>
+
+<div class="modal" id="users-modal">
+  <div class="modal-header">
+    <h3>👥 إدارة المستخدمين</h3>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div id="users-list" class="users-list"></div>
+    <button class="add-row" onclick="showAddUserForm()" style="margin-top:12px">+ إضافة مستخدم</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+/* ============ Constants ============ */
+const STORAGE_KEY = 'concreteCalc_v3';
+const BACKUP_KEY = 'concreteCalc_backups_v3';
+const THEME_KEY = 'calc-theme';
+const COLLAPSE_KEY = 'calc-collapse';
+const PAGE_KEY = 'calc-active-page';
+const USERS_KEY = 'concreteCalc_users_v1';
+const SESSION_KEY = 'concreteCalc_session_v1';
+const SALT = 'concreteCalc::v1::salt::do_not_change';
+const SECTIONS = ['wood','misc','concrete','transport','received','payments','budget'];
+const STATUSES = { active: {label:'نشط', cls:'active'}, completed: {label:'منتهي', cls:'completed'}, paused: {label:'موقوف', cls:'paused'} };
+const COLORS = { misc:'#8b5cf6', concrete:'#0ea5e9', transport:'#10b981', wood:'#f59e0b' };
+
+let uid = 1;
+let currentProject = null;
+let allProjects = [];
+let currentUser = null;
+let authMode = 'login';
+let undoStack = [];
+let redoStack = [];
+let lastSavedSnapshot = '';
+let collapsedSections = loadCollapse();
+let deferredPrompt = null;
+let currentPage = 'calculator';
+
+const $ = id => document.getElementById(id);
+const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+const fmt = n => (Math.round((n+Number.EPSILON)*100)/100).toLocaleString('en-US',{maximumFractionDigits:2});
+const money = n => fmt(n) + ' ' + (currentProject?.project?.currency || 'ج.م');
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const rowTotal = r => num(r.qty) * num(r.price);
+const sum = k => (currentProject?.sections[k]||[]).reduce((a,r)=>a+rowTotal(r),0);
+const newRow = (extra={}) => ({ id: uid++, desc:'', qty:1, price:0, notes:'', ...extra });
+
+/* ============ AUTH MODULE ============ */
+function simpleHash(str){
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for(let i=0;i<str.length;i++){
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
+  return (h2>>>0).toString(16).padStart(8,'0') + (h1>>>0).toString(16).padStart(8,'0');
+}
+async function hashPassword(password){
+  const salted = SALT + '::' + password;
+  if(window.crypto && crypto.subtle){
+    try{
+      const data = new TextEncoder().encode(salted);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }catch(e){}
+  }
+  return 'fb_' + simpleHash(salted) + simpleHash([...salted].reverse().join(''));
+}
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY)||'[]'); }catch(e){ return []; } }
+function saveUsers(u){ try{ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }catch(e){} }
+function loadSession(){ try{ return JSON.parse(localStorage.getItem(SESSION_KEY)||'null'); }catch(e){ return null; } }
+function saveSession(s){
+  try{ s ? localStorage.setItem(SESSION_KEY, JSON.stringify(s)) : localStorage.removeItem(SESSION_KEY); }catch(e){}
+}
+function showAuthScreen(mode){
+  authMode = mode;
+  const screen = $('auth-screen'); if(!screen) return;
+  screen.classList.add('show');
+  const sub = $('auth-subtitle'), btn = $('auth-submit');
+  const fn = $('field-fullname'), p2 = $('field-password2');
+  if(mode === 'setup'){
+    sub.textContent = '🚀 إعداد أول مستخدم (مدير النظام)';
+    btn.textContent = 'إنشاء الحساب'; fn.style.display = 'block'; p2.style.display = 'block';
+    $('auth-password').autocomplete = 'new-password';
+  } else {
+    sub.textContent = 'سجل الدخول للمتابعة';
+    btn.textContent = 'دخول'; fn.style.display = 'none'; p2.style.display = 'none';
+    $('auth-password').autocomplete = 'current-password';
+  }
+  $('auth-form').reset(); $('auth-error').textContent = '';
+  setTimeout(()=>$('auth-username').focus(),100);
+}
+function hideAuthScreen(){ $('auth-screen').classList.remove('show'); }
+async function handleAuthSubmit(e){
+  e.preventDefault();
+  const errEl = $('auth-error'); errEl.textContent = '';
+  const username = $('auth-username').value.trim().toLowerCase();
+  const password = $('auth-password').value;
+  const fullname = $('auth-fullname').value.trim();
+  const password2 = $('auth-password2').value;
+  if(!/^[a-z0-9_]{3,}$/.test(username)){ errEl.textContent='اسم المستخدم: 3+ حروف إنجليزية/أرقام/underscore'; return; }
+  if(!password || password.length < 4){ errEl.textContent='كلمة المرور: 4 أحرف على الأقل'; return; }
+  const users = loadUsers();
+  if(authMode === 'login'){
+    const user = users.find(u => u.username === username);
+    if(!user){ errEl.textContent = 'بيانات الدخول غير صحيحة'; return; }
+    if(user.active === false){ errEl.textContent = 'هذا الحساب معطل، تواصل مع المدير'; return; }
+    const hash = await hashPassword(password);
+    if(hash !== user.passwordHash){ errEl.textContent = 'بيانات الدخول غير صحيحة'; return; }
+    await loginAs(user, true); return;
+  }
+  if(password !== password2){ errEl.textContent='كلمتا المرور غير متطابقتين'; return; }
+  if(users.some(u => u.username === username)){ errEl.textContent='اسم المستخدم مستخدم بالفعل'; return; }
+  const hash = await hashPassword(password);
+  const user = {
+    id: 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    username, passwordHash: hash, name: fullname || username,
+    role: authMode === 'setup' ? 'admin' : 'user',
+    active: true, createdAt: Date.now(), lastLogin: Date.now()
+  };
+  users.push(user); saveUsers(users);
+  await loginAs(user, true);
+}
+async function loginAs(user, showToastMsg){
+  currentUser = user;
+  saveSession({ userId: user.id, loginTime: Date.now() });
+  const users = loadUsers();
+  const u = users.find(x => x.id === user.id);
+  if(u){ u.lastLogin = Date.now(); saveUsers(users); }
+  lastSavedSnapshot = '';
+  hideAuthScreen();
+  updateUserUI();
+  $('sticky-summary').classList.remove('show');
+  loadStorage();
+  undoStack = []; redoStack = []; updateUndoButtons();
+  fillProjectInputs();
+  renderAll();
+  if(showToastMsg) toast(`👋 مرحباً ${user.name || user.username}`, 'ok');
+}
+async function logout(){
+  const ok = await customConfirm('تسجيل الخروج', 'هل تريد حفظ العمل والخروج من الحساب؟', 'خروج');
+  if(!ok) return;
+  try{ saveStorage(); }catch(e){}
+  currentUser = null; saveSession(null);
+  allProjects = []; currentProject = null;
+  undoStack = []; redoStack = [];
+  lastSavedSnapshot = '';
+  $('sticky-summary').classList.remove('show');
+  showAuthScreen('login');
+  toast('👋 تم تسجيل الخروج', 'info');
+}
+function updateUserUI(){
+  if(!currentUser) return;
+  $('user-name').textContent = currentUser.name || currentUser.username;
+  $('user-avatar').textContent = (currentUser.name || currentUser.username).charAt(0).toUpperCase();
+  $('users-admin-btn').style.display = currentUser.role === 'admin' ? 'inline-flex' : 'none';
+}
+function showUsersManager(){
+  if(!currentUser || currentUser.role !== 'admin'){ toast('❌ للمدير فقط', 'err'); return; }
+  renderUsersList();
+  $('modal-overlay').classList.add('show');
+  $('users-modal').classList.add('show');
+}
+function renderUsersList(){
+  const users = loadUsers();
+  const list = $('users-list'); if(!list) return;
+  if(users.length === 0){ list.innerHTML = '<p style="text-align:center;color:var(--muted)">لا يوجد مستخدمون</p>'; return; }
+  list.innerHTML = users.map(u => {
+    const isMe = u.id === currentUser.id;
+    const statusCls = u.active === false ? 'inactive' : 'active';
+    const roleLabel = u.role === 'admin' ? '👑 مدير' : '👤 مستخدم';
+    const lastLogin = u.lastLogin ? new Date(u.lastLogin).toLocaleDateString('ar-EG') : '—';
+    return `<div class="user-item ${statusCls}">
+      <span class="user-item-avatar">${esc((u.name||u.username).charAt(0).toUpperCase())}</span>
+      <div class="user-item-info">
+        <div class="user-item-name">${esc(u.name || u.username)} ${isMe ? '<span style="color:var(--primary-2);font-size:.7rem">(أنت)</span>' : ''}</div>
+        <div class="user-item-meta">@${esc(u.username)} · ${roleLabel} · آخر دخول: ${lastLogin}</div>
+      </div>
+      <div class="user-item-actions">
+        <button class="uib" onclick="editUser('${u.id}')" title="تعديل">✏️</button>
+        ${!isMe ? `<button class="uib danger" onclick="deleteUser('${u.id}')" title="حذف">🗑️</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+async function showAddUserForm(){
+  const users = loadUsers();
+  const raw = prompt('اسم المستخدم الجديد (إنجليزي):'); if(!raw) return;
+  const username = raw.trim().toLowerCase();
+  if(!/^[a-z0-9_]{3,}$/.test(username)){ toast('❌ اسم غير صالح', 'err'); return; }
+  if(users.some(u => u.username === username)){ toast('❌ مستخدم بالفعل', 'err'); return; }
+  const name = prompt('الاسم الكامل:', '') || username;
+  const password = prompt('كلمة المرور (4+):');
+  if(!password || password.length < 4){ toast('❌ كلمة مرور قصيرة', 'err'); return; }
+  const isAdmin = confirm('منحه صلاحية مدير؟\nموافق = مدير، إلغاء = مستخدم عادي');
+  users.push({
+    id: 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    username, passwordHash: await hashPassword(password),
+    name: name.trim() || username,
+    role: isAdmin ? 'admin' : 'user',
+    active: true, createdAt: Date.now(), lastLogin: null
+  });
+  saveUsers(users); renderUsersList();
+  toast('✅ تم إضافة المستخدم', 'ok');
+}
+async function editUser(userId){
+  const users = loadUsers();
+  const user = users.find(u => u.id === userId); if(!user) return;
+  const choice = prompt(`تعديل "${user.name||user.username}"\n1=اسم | 2=كلمة مرور | 3=صلاحية | 4=${user.active===false?'تفعيل':'تعطيل'}\nاكتب الرقم:`, '1');
+  if(!choice) return;
+  if(choice === '1'){
+    const n = prompt('الاسم الجديد:', user.name || '');
+    if(n && n.trim()) user.name = n.trim();
+  } else if(choice === '2'){
+    const p = prompt('كلمة المرور الجديدة (4+):');
+    if(p && p.length >= 4) user.passwordHash = await hashPassword(p);
+    else if(p !== null){ toast('❌ قصيرة', 'err'); return; }
+  } else if(choice === '3'){
+    if(user.id === currentUser.id){ toast('❌ لا يمكنك تغيير صلاحيتك', 'err'); return; }
+    if(user.role === 'admin'){
+      const admins = users.filter(u => u.role==='admin' && u.active !== false);
+      if(admins.length <= 1){ toast('❌ لا يمكن إزالة آخر مدير', 'err'); return; }
+      user.role = 'user';
+    } else user.role = 'admin';
+  } else if(choice === '4'){
+    if(user.id === currentUser.id){ toast('❌ لا يمكنك تعطيل نفسك', 'err'); return; }
+    if(user.role === 'admin' && user.active !== false){
+      const admins = users.filter(u => u.role==='admin' && u.active !== false);
+      if(admins.length <= 1){ toast('❌ لا يمكن تعطيل آخر مدير نشط', 'err'); return; }
+    }
+    user.active = user.active === false ? true : false;
+  }
+  saveUsers(users); renderUsersList();
+  toast('✅ تم التحديث', 'ok');
+}
+async function deleteUser(userId){
+  const users = loadUsers();
+  const user = users.find(u => u.id === userId); if(!user) return;
+  if(user.id === currentUser.id){ toast('❌ لا يمكنك حذف نفسك', 'err'); return; }
+  if(!confirm(`سيتم حذف "${user.name||user.username}" وجميع مشاريعه نهائياً. متابعة؟`)) return;
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      if(Array.isArray(d.projects)){
+        d.projects = d.projects.filter(p => p.ownerId !== user.id);
+        if(d.currentIdByUser) delete d.currentIdByUser[user.id];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+      }
+    }
+  }catch(e){}
+  saveUsers(users.filter(u => u.id !== userId));
+  renderUsersList();
+  toast('🗑️ تم حذف المستخدم', 'ok');
+}
+
+/* ============ Storage ============ */
+function loadCollapse(){ try{ return JSON.parse(localStorage.getItem(COLLAPSE_KEY)) || {}; }catch(e){ return {}; } }
+function saveCollapse(){ try{ localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsedSections)); }catch(e){} }
+
+function migrateProject(p){
+  if(!p) return;
+  if(!p.project) p.project = {};
+  if(p.project.budgetTotal === undefined) p.project.budgetTotal = 0;
+  if(p.project.linkBudgetToContract === undefined) p.project.linkBudgetToContract = false;
+  if(!p.sections) p.sections = {};
+  ['wood','misc','concrete','transport','received','payments','budget'].forEach(k => {
+    if(!Array.isArray(p.sections[k])) p.sections[k] = [];
+  });
+}
+
+function loadStorage(){
+  const userId = currentUser?.id;
+  if(!userId) return;
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const data = JSON.parse(raw);
+      if(Array.isArray(data.projects)){
+        const mine = data.projects.filter(p => p.ownerId === userId);
+        if(mine.length > 0){
+          allProjects = mine;
+          mine.forEach(migrateProject);
+          const wantedId = (data.currentIdByUser||{})[userId];
+          currentProject = mine.find(p => p.id === wantedId) || mine[0];
+          return;
+        }
+      }
+    }
+  }catch(e){}
+  const p = createDefaultProject(); p.ownerId = userId;
+  allProjects = [p]; currentProject = p; saveStorage();
+}
+
+function saveStorage(){
+  const userId = currentUser?.id;
+  if(!userId || !currentProject) return;
+  try{
+    let existing = { projects: [], currentIdByUser: {} };
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) existing = JSON.parse(raw) || existing;
+    }catch(e){}
+    if(!Array.isArray(existing.projects)) existing.projects = [];
+    if(!existing.currentIdByUser) existing.currentIdByUser = {};
+    const others = existing.projects.filter(p => p.ownerId !== userId);
+    const mine = allProjects.map(p => ({ ...p, ownerId: userId }));
+    existing.projects = [...others, ...mine];
+    existing.currentIdByUser[userId] = currentProject?.id;
+    existing.version = 3;
+    const json = JSON.stringify(existing);
+    if(json !== lastSavedSnapshot){
+      if(lastSavedSnapshot){
+        try{
+          let backups = JSON.parse(localStorage.getItem(BACKUP_KEY) || '[]');
+          backups.unshift({
+            time: Date.now(),
+            data: JSON.stringify({ project: currentProject.project, sections: currentProject.sections }),
+            name: currentProject?.project?.name || 'مشروع',
+            userId: userId
+          });
+          backups = backups.slice(0, 5);
+          localStorage.setItem(BACKUP_KEY, JSON.stringify(backups));
+        }catch(e){}
+      }
+      lastSavedSnapshot = json;
+    }
+    localStorage.setItem(STORAGE_KEY, json);
+    const d = new Date();
+    const t = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const el = $('save-status'); if(el) el.textContent = '💾 محفوظ تلقائياً · ' + t;
+  }catch(e){}
+}
+
+function createDefaultProject(){
+  const today = new Date().toISOString().slice(0,10);
+  return {
+    id: 'p_' + Date.now() + Math.random().toString(36).slice(2,6),
+    ownerId: currentUser?.id || null,
+    createdAt: Date.now(),
+    status: 'active',
+    project: { name:'', client:'', date: today, currency:'ج.م', contract:0, received:0, includeWoodInCosts:false, woodPaid:0, notes:'', budgetTotal:0, linkBudgetToContract:false },
+    sections: { wood:[], misc:[], concrete:[], transport:[], received:[], payments:[], budget:[] }
+  };
+}
+
+/* ============ Undo/Redo ============ */
+function snapshot(){
+  if(!currentProject) return '';
+  return JSON.stringify({ project: currentProject.project, sections: currentProject.sections });
+}
+function pushUndo(){
+  const snap = snapshot();
+  if(undoStack.length && undoStack[undoStack.length-1] === snap) return;
+  undoStack.push(snap);
+  if(undoStack.length > 50) undoStack.shift();
+  redoStack = [];
+  updateUndoButtons();
+}
+function updateUndoButtons(){
+  const u = $('undo-btn'), r = $('redo-btn');
+  if(u) u.disabled = undoStack.length === 0;
+  if(r) r.disabled = redoStack.length === 0;
+}
+function doUndo(){
+  if(undoStack.length === 0) return;
+  const current = snapshot();
+  redoStack.push(current);
+  const prev = undoStack.pop();
+  applySnapshot(prev);
+  updateUndoButtons();
+  toast('↶ تم التراجع', 'info');
+}
+function doRedo(){
+  if(redoStack.length === 0) return;
+  const current = snapshot();
+  undoStack.push(current);
+  const next = redoStack.pop();
+  applySnapshot(next);
+  updateUndoButtons();
+  toast('↷ تم الإعادة', 'info');
+}
+function applySnapshot(snap){
+  try{
+    const data = JSON.parse(snap);
+    currentProject.project = data.project;
+    currentProject.sections = data.sections;
+    fixUid();
+    fillProjectInputs();
+    renderAll();
+    saveStorage();
+  }catch(e){}
+}
+
+/* ============ Project Management ============ */
+function switchProject(id){
+  if(!id || !currentProject || id === currentProject.id) return;
+  const p = allProjects.find(x => x.id === id);
+  if(!p) return;
+  saveStorage();
+  currentProject = p;
+  undoStack = []; redoStack = []; updateUndoButtons();
+  fixUid();
+  fillProjectInputs();
+  renderAll();
+  toast('📁 تم تبديل المشروع', 'info');
+}
+function newProject(){
+  const name = prompt('اسم المشروع الجديد:', 'مشروع جديد');
+  if(name === null) return;
+  const p = createDefaultProject();
+  p.project.name = name.trim() || 'مشروع جديد';
+  p.ownerId = currentUser.id;
+  allProjects.push(p);
+  currentProject = p;
+  undoStack = []; redoStack = [];
+  saveStorage();
+  fillProjectInputs();
+  renderAll();
+  updateProjectBar();
+  toast('✅ تم إنشاء مشروع جديد', 'ok');
+}
+function renameProject(){
+  const name = prompt('اسم المشروع:', currentProject.project.name || '');
+  if(name === null) return;
+  currentProject.project.name = name.trim();
+  $('p-name').value = currentProject.project.name;
+  saveStorage();
+  updateProjectBar();
+  toast('✅ تم التحديث');
+}
+function cycleStatus(){
+  const order = ['active', 'completed', 'paused'];
+  const idx = order.indexOf(currentProject.status);
+  currentProject.status = order[(idx+1) % order.length];
+  saveStorage();
+  updateProjectBar();
+  toast('🏷️ الحالة: ' + STATUSES[currentProject.status].label);
+}
+async function deleteProject(){
+  if(allProjects.length === 1){
+    toast('❌ لا يمكن حذف المشروع الوحيد', 'err');
+    return;
+  }
+  const ok = await customConfirm('حذف المشروع', `سيتم حذف "${currentProject.project.name || 'بدون اسم'}" وكل بياناته نهائياً.`, 'حذف');
+  if(!ok) return;
+  allProjects = allProjects.filter(p => p.id !== currentProject.id);
+  currentProject = allProjects[0];
+  undoStack = []; redoStack = [];
+  saveStorage();
+  fillProjectInputs();
+  renderAll();
+  updateProjectBar();
+  toast('🗑️ تم الحذف');
+}
+function updateProjectBar(){
+  const sel = $('project-select');
+  if(!sel || !currentProject) return;
+  sel.innerHTML = allProjects.map(p => {
+    const star = p.id === currentProject.id ? '● ' : '';
+    const name = p.project.name || 'بدون اسم';
+    const status = STATUSES[p.status]?.label || 'نشط';
+    return `<option value="${p.id}" ${p.id === currentProject.id ? 'selected' : ''}>${star}${esc(name)} — ${status}</option>`;
+  }).join('');
+  const st = STATUSES[currentProject.status] || STATUSES.active;
+  const badge = $('status-badge');
+  badge.textContent = st.label;
+  badge.className = 'status-badge ' + st.cls;
+}
+
+/* ============ Page Switching ============ */
+function switchPage(page){
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  const target = $('page-' + page);
+  if(target) target.style.display = '';
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
+  try{ localStorage.setItem(PAGE_KEY, page); }catch(e){}
+  setTimeout(updateStickyVisibility, 100);
+}
+
+/* ============ Collapse ============ */
+function toggleCollapse(name){
+  collapsedSections[name] = !collapsedSections[name];
+  saveCollapse();
+  applyCollapse(name);
+}
+function applyCollapse(name){
+  const sec = document.querySelector(`[data-section="${name}"]`);
+  if(sec) sec.classList.toggle('collapsed', !!collapsedSections[name]);
+}
+function applyAllCollapse(){
+  Object.keys(collapsedSections).forEach(n => applyCollapse(n));
+}
+
+/* ============ Formula ============ */
+function evalFormula(expr){
+  if(expr === null || expr === undefined) return 0;
+  let s = String(expr).trim(); if(!s) return 0;
+  const direct = parseFloat(s);
+  if(!isNaN(direct) && /^[+-]?\d+(\.\d+)?$/.test(s)) return direct;
+  s = s.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/٫/g,'.').replace(/٬/g,'').replace(/,/g,'').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+  if(!/^[0-9+\-*/().\s]+$/.test(s)) return 0;
+  try{ const r = new Function('"use strict"; return (' + s + ');')(); if(!isFinite(r)) return 0; return r < 0 ? 0 : r; }catch(e){ return 0; }
+}
+function isFormulaValid(expr){
+  if(!expr) return true;
+  const s = String(expr).trim();
+  if(!s) return true;
+  const c = s.replace(/[×÷−٫٬]/g,'').replace(/[٠-٩]/g,'').replace(/,/g,'');
+  return /^[0-9+\-*/().\s]*$/.test(c);
+}
+
+const concreteRowLabor = r => num(r.labor);
+const concreteRowValue = r => num(r.qty) * num(r.price);
+const concreteRowNet = r => concreteRowValue(r) - concreteRowLabor(r);
+const sumConcreteLabor = () => (currentProject?.sections.concrete||[]).reduce((a,r)=>a+concreteRowLabor(r),0);
+const sumConcreteValue = () => (currentProject?.sections.concrete||[]).reduce((a,r)=>a+concreteRowValue(r),0);
+const sumConcreteNet = () => (currentProject?.sections.concrete||[]).reduce((a,r)=>a+concreteRowNet(r),0);
+
+/* ============ Render ============ */
+function renderAll(){
+  if(!currentProject) return;
+  SECTIONS.forEach(k => {
+    if(k === 'budget') renderBudget();
+    else renderSection(k);
+  });
+  syncWoodToggleUI();
+  syncBudgetLinkUI();
+  updateTotals();
+  updateBudgetTotals();
+  updateProjectBar();
+  applyAllCollapse();
+  switchPage(currentPage);
+}
+
+function renderSection(key){
+  const tbody = $(key + '-body'); if(!tbody || !currentProject) return;
+  const rows = currentProject.sections[key] || [];
+  if(rows.length === 0){
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">لا توجد بنود بعد -- اضغط "+ إضافة" تحت</div></td></tr>`;
+    return;
+  }
+  if(key === 'payments' || key === 'received'){
+    tbody.innerHTML = rows.map((r,i)=>`
+      <tr data-idx="${i}">
+        <td><span class="row-num">${i+1}</span></td>
+        <td><input data-field="desc" value="${esc(r.desc)}" placeholder="البيان"></td>
+        <td><input data-field="date" type="date" value="${esc(r.date||'')}" style="max-width:140px;margin:0 auto"></td>
+        <td><input data-field="price" type="number" min="0" step="any" value="${r.price||''}" placeholder="0" style="max-width:130px;margin:0 auto"></td>
+        <td><input data-field="notes" value="${esc(r.notes||'')}" placeholder="…" style="max-width:140px;margin:0 auto"></td>
+        <td><div class="row-actions"><button class="dup" data-dup="${i}" title="نسخ">📋</button><button class="del" data-del="${i}" title="حذف">✕</button></div></td>
+      </tr>`).join('');
+  } else if(key === 'concrete'){
+    tbody.innerHTML = rows.map((r,i)=>{
+      const labor = concreteRowLabor(r);
+      const net = concreteRowNet(r);
+      const expr = (typeof r.laborInput === 'string') ? r.laborInput : String(r.labor || '');
+      const invalid = expr && !isFormulaValid(expr);
+      const resultClass = invalid ? 'formula-result invalid' : 'formula-result';
+      const resultText = invalid ? '⚠ غير صالحة' : '= ' + fmt(labor);
+      return `<tr data-idx="${i}">
+        <td><span class="row-num">${i+1}</span></td>
+        <td><input data-field="desc" value="${esc(r.desc)}" placeholder="البند"></td>
+        <td class="labor-cell"><div class="labor-wrap">
+          <input data-field="laborInput" type="text" value="${esc(expr)}" placeholder="4*400*3" dir="ltr">
+          <div class="${resultClass}">${resultText}</div>
+        </div></td>
+        <td><input data-field="qty" type="number" min="0" step="any" value="${r.qty||''}" placeholder="0" style="max-width:70px;margin:0 auto"></td>
+        <td><input data-field="price" type="number" min="0" step="any" value="${r.price||''}" placeholder="0" style="max-width:90px;margin:0 auto"></td>
+        <td class="row-total">${fmt(concreteRowValue(r))}</td>
+        <td class="row-net" style="color:${net>=0?'var(--green)':'var(--red)'}">${fmt(net)}</td>
+        <td><input data-field="notes" value="${esc(r.notes||'')}" placeholder="…" style="max-width:120px;margin:0 auto"></td>
+        <td><div class="row-actions"><button class="dup" data-dup="${i}">📋</button><button class="del" data-del="${i}">✕</button></div></td>
+      </tr>`;
+    }).join('');
+  } else {
+    tbody.innerHTML = rows.map((r,i)=>`
+      <tr data-idx="${i}">
+        <td><span class="row-num">${i+1}</span></td>
+        <td><input data-field="desc" value="${esc(r.desc)}" placeholder="البيان"></td>
+        <td><input data-field="qty" type="number" min="0" step="any" value="${r.qty||''}" placeholder="0" style="max-width:90px;margin:0 auto"></td>
+        <td><input data-field="price" type="number" min="0" step="any" value="${r.price||''}" placeholder="0" style="max-width:110px;margin:0 auto"></td>
+        <td class="row-total">${fmt(rowTotal(r))}</td>
+        <td><input data-field="notes" value="${esc(r.notes||'')}" placeholder="…" style="max-width:140px;margin:0 auto"></td>
+        <td><div class="row-actions"><button class="dup" data-dup="${i}">📋</button><button class="del" data-del="${i}">✕</button></div></td>
+      </tr>`).join('');
+  }
+}
+
+function syncWoodToggleUI(){
+  if(!currentProject) return;
+  const include = !!currentProject.project.includeWoodInCosts;
+  $('wood-include-toggle').classList.toggle('active', include);
+  $('wood-toggle-label').textContent = include ? 'محتسبة' : 'غير محتسبة';
+  $('wood-card').classList.toggle('included', include);
+  $('wood-subtotal-label').textContent = include ? 'إجمالي تكلفة الخشب (محتسبة)' : 'إجمالي تكلفة الخشب (منفصلة)';
+  const hint = $('wood-hint');
+  hint.classList.toggle('active', include);
+  hint.innerHTML = include ? '✅ تكلفة الخشب <b>محتسبة ضمن إجمالي التكاليف</b>.' : '⚠️ تكلفة الخشب معروضة بشكل منفصل -- <b>لا تدخل في إجمالي التكاليف ولا في حساب الربح</b>.';
+  $('wood-breakdown-row').classList.toggle('included', include);
+  $('wood-breakdown-note').textContent = include ? 'محتسبة داخل التكاليف' : 'غير محتسبة في التكاليف والربح';
+  $('costs-label').textContent = include ? 'إجمالي التكاليف (شامل الخشب)' : 'إجمالي التكاليف (بدون خشب)';
+}
+
+function syncBudgetLinkUI(){
+  if(!currentProject) return;
+  const linked = !!currentProject.project.linkBudgetToContract;
+  const toggle = $('budget-link-toggle');
+  if(toggle) toggle.classList.toggle('active', linked);
+  const label = $('budget-link-label');
+  if(label) label.textContent = linked ? '🔗 مرتبط بقيمة العقد' : 'غير مرتبط بالعقد';
+  const inp = $('budget-total-input');
+  if(inp){
+    inp.disabled = linked;
+    if(linked) inp.value = currentProject.project.contract || '';
+  }
+}
+
+/* ============ Compute + Update ============ */
+function computeTotals(){
+  const wood = sum('wood');
+  const woodPaid = num(currentProject.project.woodPaid);
+  const woodRemaining = wood - woodPaid;
+  const misc = sum('misc'), transport = sum('transport');
+  const concreteLabor = sumConcreteLabor();
+  const manualPayments = sum('payments');
+  const received = sum('received');
+  const includeWood = !!currentProject.project.includeWoodInCosts;
+  const autoWoodPaid = includeWood ? woodPaid : 0;
+  const payments = manualPayments + autoWoodPaid;
+  const costs = misc + concreteLabor + transport + (includeWood ? wood : 0);
+  const contract = num(currentProject.project.contract);
+  const profit = contract - costs;
+  const margin = contract > 0 ? (profit/contract)*100 : 0;
+  const remain = costs - payments;
+
+  const budgetRows = currentProject.sections.budget || [];
+  const partnerShare = budgetRows.reduce((a,r) => a + num(r.share), 0);
+  const partnerPaid = budgetRows.reduce((a,r) => a + num(r.paid), 0);
+  const partnerRemain = partnerShare - partnerPaid;
+
+  const cash = received + partnerPaid - payments;
+  return {wood, woodPaid, woodRemaining, misc, concreteLabor, transport, payments, manualPayments, autoWoodPaid, received, costs, contract, profit, margin, remain, cash, includeWood, partnerShare, partnerPaid, partnerRemain, budgetRows};
+}
+
+function updateTotals(){
+  if(!currentProject) return;
+  const t = computeTotals();
+  const cLabor = sumConcreteLabor(), cValue = sumConcreteValue(), cNet = sumConcreteNet();
+  const cMargin = cValue > 0 ? (cNet/cValue)*100 : 0;
+
+  $('wood-total').textContent = money(t.wood);
+  $('wood-total-display').textContent = money(t.wood);
+  $('wood-remaining-display').textContent = money(t.woodRemaining);
+  $('wood-remaining-item').classList.toggle('neg', t.woodRemaining < 0);
+  const wp = $('wood-paid-input'); if(wp && wp.value !== String(t.woodPaid || '')) wp.value = t.woodPaid || '';
+
+  $('misc-total').textContent = money(sum('misc'));
+  $('concrete-total').textContent = money(cLabor);
+  $('transport-total').textContent = money(sum('transport'));
+  $('received-total').textContent = money(sum('received'));
+
+  const payLabel = $('payments-label');
+  if(payLabel) payLabel.textContent = t.includeWood ? 'إجمالي المدفوعات (شامل المسدد من الخشب)' : 'إجمالي المدفوعات';
+  $('payments-total').textContent = money(t.payments);
+
+  const autoNote = $('auto-wood-note');
+  if(autoNote){
+    if(t.includeWood && t.autoWoodPaid > 0){ autoNote.style.display = 'flex'; $('auto-wood-paid').textContent = money(t.autoWoodPaid); }
+    else autoNote.style.display = 'none';
+  }
+
+  $('concrete-value').textContent = money(cValue);
+  $('concrete-net').textContent = money(cNet);
+  $('concrete-margin').textContent = fmt(cMargin) + '%';
+  $('concrete-net-box').classList.toggle('neg', cNet < 0);
+
+  $('r-misc').textContent = money(t.misc);
+  $('r-concrete').textContent = money(t.concreteLabor);
+  $('r-transport').textContent = money(t.transport);
+  $('r-costs').textContent = money(t.costs);
+  $('r-wood').textContent = money(t.wood);
+  $('r-wood-paid').textContent = money(t.woodPaid);
+  $('r-wood-remaining').textContent = money(t.woodRemaining);
+  $('r-wood-remaining').style.color = t.woodRemaining < 0 ? 'var(--red)' : 'var(--green)';
+
+  const pbl = $('payments-breakdown-label');
+  if(pbl) pbl.textContent = t.includeWood ? 'المدفوعات (شامل الخشب)' : 'المدفوعات الكلية';
+  $('r-payments').textContent = money(t.payments);
+
+  const autoRow = $('r-auto-wood-row');
+  if(autoRow){
+    if(t.includeWood && t.autoWoodPaid > 0){ autoRow.style.display = 'flex'; $('r-auto-wood-paid').textContent = money(t.autoWoodPaid); }
+    else autoRow.style.display = 'none';
+  }
+
+  $('r-remain').textContent = money(t.remain);
+  $('r-contract').textContent = money(t.contract);
+  $('r-received').textContent = money(t.received);
+  $('r-cash').textContent = money(t.cash);
+  $('r-profit').textContent = money(t.profit);
+  $('r-margin').textContent = fmt(t.margin) + '%';
+  $('r-concrete-value').textContent = money(cValue);
+  $('r-concrete-net').textContent = money(cNet);
+  $('r-concrete-margin').textContent = fmt(cMargin) + '%';
+
+  $('r-partner-paid').textContent = money(t.partnerPaid);
+  $('r-received-row').textContent = money(t.received);
+  $('r-partner-total').textContent = money(t.partnerShare);
+  $('r-partner-paid-kpi').textContent = money(t.partnerPaid);
+  $('r-partner-remain').textContent = money(t.partnerRemain);
+  const pnote = $('r-partner-note');
+  if(pnote) pnote.textContent = t.partnerPaid > 0 ? '💰 مضافة للرصيد النقدي' : 'لم يدفع أحد بعد';
+
+  $('kpi-cash').style.borderColor = t.cash < 0 ? '#fecaca' : '#bbf7d0';
+  $('r-cash').style.color = t.cash < 0 ? 'var(--red)' : 'var(--green)';
+  $('kpi-profit').classList.toggle('neg', t.profit < 0);
+  const km = $('kpi-margin');
+  km.style.borderColor = t.margin < 0 ? '#fecaca' : (t.margin > 0 ? '#bbf7d0' : 'var(--border)');
+  $('r-margin').style.color = t.margin < 0 ? 'var(--red)' : (t.margin > 0 ? 'var(--green)' : 'var(--primary)');
+  $('kpi-concrete-net').classList.toggle('neg', cNet < 0);
+  $('kpi-concrete-margin').style.borderColor = cMargin < 0 ? '#fecaca' : (cMargin > 0 ? '#bbf7d0' : 'var(--border)');
+  $('r-concrete-margin').style.color = cMargin < 0 ? 'var(--red)' : (cMargin > 0 ? 'var(--green)' : 'var(--primary)');
+
+  const pbRecv = t.contract > 0 ? Math.min(100, (t.received/t.contract)*100) : 0;
+  const pbPaid = t.costs > 0 ? Math.min(100, (t.payments/t.costs)*100) : 0;
+  $('pb-received').style.width = pbRecv + '%';
+  $('pb-received-label').textContent = pbRecv.toFixed(0) + '%';
+  $('pb-paid').style.width = pbPaid + '%';
+  $('pb-paid-label').textContent = pbPaid.toFixed(0) + '%';
+  $('pb-received').className = 'progress-fill ' + (pbRecv >= 100 ? 'green' : (pbRecv >= 50 ? '' : 'warn'));
+  $('pb-paid').className = 'progress-fill ' + (pbPaid >= 100 ? 'green' : (pbPaid >= 50 ? '' : 'warn'));
+
+  $('ss-contract').textContent = money(t.contract);
+  $('ss-costs').textContent = money(t.costs);
+  $('ss-profit').textContent = money(t.profit);
+  $('ss-remain').textContent = money(t.remain);
+  $('ss-profit-item').classList.toggle('neg', t.profit < 0);
+
+  const allItems = [...currentProject.sections.misc, ...currentProject.sections.transport, ...currentProject.sections.wood];
+  const count = allItems.length + currentProject.sections.concrete.length;
+  const amounts = [...allItems.map(rowTotal), ...currentProject.sections.concrete.map(concreteRowValue)].filter(x => x > 0);
+  const avg = amounts.length > 0 ? amounts.reduce((a,b)=>a+b,0) / amounts.length : 0;
+  const max = amounts.length > 0 ? Math.max(...amounts) : 0;
+  const totalM3 = currentProject.sections.concrete.reduce((a,r)=>a+num(r.qty),0);
+  const perM3 = totalM3 > 0 ? t.contract / totalM3 : 0;
+
+  $('stat-items').textContent = count;
+  $('stat-avg').textContent = money(avg);
+  $('stat-max').textContent = money(max);
+  $('stat-per-m3').textContent = totalM3 > 0 ? money(perM3) : '—';
+
+  drawChart(t);
+  drawAlerts(t);
+  updateStickyVisibility();
+  updateSearchCount();
+}
+
+function drawChart(t){
+  const data = [
+    { key:'misc', name:'مسامير/شامبر', val: t.misc },
+    { key:'concrete', name:'صنايعية', val: t.concreteLabor },
+    { key:'transport', name:'نقل/معدات', val: t.transport }
+  ];
+  if(t.includeWood) data.push({ key:'wood', name:'خشب', val: t.wood });
+
+  const total = data.reduce((a,x)=>a+x.val,0);
+  const svg = $('donut-svg');
+  const legend = $('chart-legend');
+  $('donut-total').textContent = money(total);
+
+  if(total === 0){
+    svg.innerHTML = '<circle cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="26" fill="none"/>';
+    legend.innerHTML = '<div style="color:var(--muted);font-size:.78rem;font-weight:600;text-align:center">لا توجد تكاليف مسجلة</div>';
+    return;
+  }
+
+  let offset = 0;
+  const circumference = 2 * Math.PI * 40;
+  svg.innerHTML = '<circle cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="26" fill="none"/>';
+
+  data.forEach(d => {
+    if(d.val <= 0) return;
+    const pct = d.val / total;
+    const dash = pct * circumference;
+    const circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circ.setAttribute('cx',50);
+    circ.setAttribute('cy',50);
+    circ.setAttribute('r',40);
+    circ.setAttribute('stroke', COLORS[d.key] || '#94a3b8');
+    circ.setAttribute('stroke-width', 26);
+    circ.setAttribute('fill','none');
+    circ.setAttribute('stroke-dasharray', `${dash} ${circumference - dash}`);
+    circ.setAttribute('stroke-dashoffset', -offset);
+    circ.setAttribute('stroke-linecap', 'butt');
+    svg.appendChild(circ);
+    offset += dash;
+  });
+
+  legend.innerHTML = data.filter(d => d.val > 0).map(d => {
+    const pct = (d.val/total)*100;
+    return `<div class="legend-item">
+      <span class="legend-dot" style="background:${COLORS[d.key]}"></span>
+      <span class="legend-name">${d.name}</span>
+      <span class="legend-val">${fmt(d.val)}</span>
+      <span class="legend-pct">${pct.toFixed(0)}%</span>
+    </div>`;
+  }).join('');
+}
+
+function drawAlerts(t){
+  const alerts = [];
+  if(t.contract > 0 && t.costs > t.contract){
+    alerts.push({ type:'danger', ico:'🚨', msg:`التكاليف تجاوزت قيمة العقد بـ ${money(t.costs - t.contract)}` });
+  }
+  if(t.contract > 0 && t.profit < 0){
+    alerts.push({ type:'danger', ico:'📉', msg:`المشروع خاسر بمقدار ${money(-t.profit)}` });
+  }
+  if(t.contract > 0 && t.margin > 0 && t.margin < 10){
+    alerts.push({ type:'warn', ico:'⚠️', msg:`هامش الربح منخفض (${fmt(t.margin)}%) — راجع التكاليف` });
+  }
+  if(t.contract > 0 && t.margin >= 20){
+    alerts.push({ type:'success', ico:'🎉', msg:`هامش ربح ممتاز (${fmt(t.margin)}%)` });
+  }
+  if(t.costs > 0 && t.payments === 0){
+    alerts.push({ type:'warn', ico:'💸', msg:'لم يتم تسجيل أي مدفوعات على المشروع بعد' });
+  }
+  if(t.wood > 0 && !t.includeWood){
+    alerts.push({ type:'warn', ico:'🪵', msg:`تكلفة الخشب (${money(t.wood)}) غير محتسبة في التكاليف — فعّل التبديل لضمّها` });
+  }
+  if(t.contract > 0 && t.received >= t.contract){
+    alerts.push({ type:'success', ico:'✅', msg:'تم تحصيل كامل قيمة العقد من العميل' });
+  }
+  if(currentProject.project.linkBudgetToContract && t.contract > 0){
+    const diff = t.contract - t.partnerShare;
+    if(t.budgetRows.length > 0 && Math.abs(diff) > 0.01){
+      alerts.push({ type:'partner', ico:'👥', msg:`أنصبة الشركاء (${money(t.partnerShare)}) ${diff > 0 ? 'أقل من' : 'أكثر من'} قيمة العقد بفرق ${money(Math.abs(diff))}` });
+    }
+    if(t.budgetRows.length > 0 && t.partnerRemain > 0){
+      alerts.push({ type:'partner', ico:'💜', msg:`متبقي على الشركاء ${money(t.partnerRemain)}` });
+    }
+  }
+
+  const box = $('alerts');
+  if(alerts.length === 0){ box.innerHTML = ''; return; }
+  box.innerHTML = alerts.map(a => `
+    <div class="alert-card ${a.type}">
+      <span class="ico">${a.ico}</span>
+      <span class="msg">${a.msg}</span>
+    </div>
+  `).join('');
+}
+
+function updateStickyVisibility(){
+  const bar = $('sticky-summary');
+  const results = $('results-card');
+  if(!bar || !results) return;
+  if(currentPage !== 'calculator'){ bar.classList.remove('show'); return; }
+  const rect = results.getBoundingClientRect();
+  bar.classList.toggle('show', rect.top < 0);
+}
+
+/* ============ Search ============ */
+function onSearch(q){
+  const bar = $('search-bar');
+  bar.classList.toggle('has-text', q.length > 0);
+  const term = q.trim().toLowerCase();
+  SECTIONS.forEach(key => {
+    if(key === 'budget') return;
+    const tbody = $(key + '-body');
+    if(!tbody) return;
+    const rows = tbody.querySelectorAll('tr');
+    rows.forEach(tr => {
+      if(!term){ tr.style.display = ''; return; }
+      const txt = tr.textContent.toLowerCase();
+      tr.style.display = txt.includes(term) ? '' : 'none';
+    });
+  });
+  updateSearchCount();
+}
+function clearSearch(){
+  $('search-input').value = '';
+  onSearch('');
+}
+function updateSearchCount(){
+  const term = $('search-input').value.trim().toLowerCase();
+  const countEl = $('search-count');
+  if(!term){ countEl.textContent = ''; return; }
+  let visible = 0;
+  SECTIONS.forEach(key => {
+    if(key === 'budget') return;
+    const tbody = $(key + '-body');
+    if(!tbody) return;
+    tbody.querySelectorAll('tr').forEach(tr => {
+      if(tr.style.display !== 'none' && tr.dataset.idx !== undefined) visible++;
+    });
+  });
+  countEl.textContent = `(${visible})`;
+}
+
+/* ============ Project Inputs ============ */
+function onProjectField(field, value){
+  if(!currentProject) return;
+  pushUndo();
+  if(field === 'contract'){
+    currentProject.project[field] = num(value);
+    if(currentProject.project.linkBudgetToContract){
+      currentProject.project.budgetTotal = num(value);
+      const inp = $('budget-total-input');
+      if(inp) inp.value = value || '';
+    }
+  } else {
+    currentProject.project[field] = value;
+  }
+  updateTotals();
+  updateBudgetTotals();
+  saveStorage();
+}
+
+function fillProjectInputs(){
+  if(!currentProject) return;
+  $('p-name').value = currentProject.project.name || '';
+  $('p-client').value = currentProject.project.client || '';
+  $('p-date').value = currentProject.project.date || '';
+  $('p-currency').value = currentProject.project.currency || 'ج.م';
+  $('p-contract').value = currentProject.project.contract || '';
+  $('p-notes').value = currentProject.project.notes || '';
+  const wp = $('wood-paid-input'); if(wp) wp.value = currentProject.project.woodPaid || '';
+  const bt = $('budget-total-input');
+  if(bt) bt.value = currentProject.project.budgetTotal || '';
+}
+
+/* ============ Row actions ============ */
+function bindTable(key){
+  const tbody = $(key+'-body'); if(!tbody) return;
+  tbody.addEventListener('input', e => {
+    if(!currentProject) return;
+    const tr = e.target.closest('tr'); if(!tr) return;
+    const idx = +tr.dataset.idx, field = e.target.dataset.field;
+    const row = currentProject.sections[key][idx];
+    if(!row || !field) return;
+    if(key === 'concrete' && field === 'laborInput'){
+      pushUndo();
+      row.laborInput = e.target.value;
+      row.labor = evalFormula(row.laborInput);
+      const resultEl = tr.querySelector('.formula-result');
+      if(resultEl){
+        const invalid = row.laborInput && !isFormulaValid(row.laborInput);
+        resultEl.className = invalid ? 'formula-result invalid' : 'formula-result';
+        resultEl.textContent = invalid ? '⚠ غير صالحة' : '= ' + fmt(row.labor);
+      }
+      e.target.classList.toggle('invalid', row.laborInput && !isFormulaValid(row.laborInput));
+      const cells = tr.querySelectorAll('.row-total, .row-net');
+      if(cells[0]) cells[0].textContent = fmt(concreteRowValue(row));
+      if(cells[1]){
+        const net = concreteRowNet(row);
+        cells[1].textContent = fmt(net);
+        cells[1].style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+      }
+      updateTotals(); saveStorage(); return;
+    }
+    const oldVal = row[field];
+    const newVal = (field === 'desc' || field === 'date' || field === 'notes') ? e.target.value : num(e.target.value);
+    if(oldVal !== newVal) pushUndo();
+    row[field] = newVal;
+    if(key === 'concrete'){
+      const cells = tr.querySelectorAll('.row-total, .row-net');
+      if(cells[0]) cells[0].textContent = fmt(concreteRowValue(row));
+      if(cells[1]){
+        const net = concreteRowNet(row);
+        cells[1].textContent = fmt(net);
+        cells[1].style.color = net >= 0 ? 'var(--green)' : 'var(--red)';
+      }
+    } else if(key !== 'payments' && key !== 'received'){
+      const rt = tr.querySelector('.row-total');
+      if(rt) rt.textContent = fmt(rowTotal(row));
+    }
+    updateTotals(); saveStorage();
+  });
+  tbody.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    const tr = e.target.closest('tr'); if(!tr) return;
+    const inputs = tr.querySelectorAll('input[data-field]');
+    const currentIdx = Array.from(inputs).indexOf(e.target);
+    if(currentIdx < inputs.length - 1){ inputs[currentIdx + 1].focus(); e.preventDefault(); }
+    else { addRow(key); e.preventDefault(); }
+  });
+  tbody.addEventListener('click', e => {
+    const delBtn = e.target.closest('[data-del]');
+    if(delBtn){ deleteRowWithUndo(key, +delBtn.dataset.del); return; }
+    const dupBtn = e.target.closest('[data-dup]');
+    if(dupBtn){ duplicateRow(key, +dupBtn.dataset.dup); return; }
+  });
+}
+function duplicateRow(key, idx){
+  pushUndo();
+  const row = currentProject.sections[key][idx];
+  if(!row) return;
+  const copy = { ...row, id: uid++ };
+  currentProject.sections[key].splice(idx + 1, 0, copy);
+  renderSection(key); updateTotals(); saveStorage();
+  toast('📋 تم نسخ السطر', 'ok');
+}
+function deleteRowWithUndo(key, idx){
+  pushUndo();
+  const row = currentProject.sections[key][idx];
+  if(!row) return;
+  const snap = { key, idx, row: { ...row } };
+  currentProject.sections[key].splice(idx, 1);
+  renderSection(key); updateTotals(); saveStorage();
+  undoToast(`تم حذف "${row.desc || 'السطر'}"`, () => {
+    currentProject.sections[key].splice(snap.idx, 0, snap.row);
+    renderSection(key); updateTotals(); saveStorage();
+    toast('↩️ تم التراجع', 'ok');
+  });
+}
+function addRow(key){
+  pushUndo();
+  const extra = {};
+  if(key === 'received' || key === 'payments') extra.date = new Date().toISOString().slice(0,10);
+  if(key === 'concrete'){ extra.laborInput = ''; extra.labor = 0; }
+  currentProject.sections[key].push(newRow(extra));
+  renderSection(key); updateTotals(); saveStorage();
+  const tbody = $(key+'-body');
+  const last = tbody.lastElementChild;
+  if(last){
+    const inp = last.querySelector('input');
+    if(inp) inp.focus();
+    last.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+}
+
+/* ============ Wood toggle ============ */
+function toggleWoodInclude(){
+  if(!currentProject) return;
+  pushUndo();
+  currentProject.project.includeWoodInCosts = !currentProject.project.includeWoodInCosts;
+  syncWoodToggleUI(); updateTotals(); saveStorage();
+  toast(currentProject.project.includeWoodInCosts ? '✅ الخشب محتسب' : '✅ الخشب منفصل', 'ok');
+}
+function bindWoodPaid(){
+  const inp = $('wood-paid-input');
+  if(!inp) return;
+  inp.addEventListener('input', () => {
+    if(!currentProject) return;
+    currentProject.project.woodPaid = num(inp.value);
+    updateTotals();
+    saveStorage();
+  });
+}
+
+/* ============ BUDGET ============ */
+function renderBudget(){
+  if(!currentProject) return;
+  if(!Array.isArray(currentProject.sections.budget)) currentProject.sections.budget = [];
+  const tbody = $('budget-body');
+  if(!tbody) return;
+  const rows = currentProject.sections.budget;
+  if(rows.length === 0){
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">لا يوجد أفراد بعد — اضغط "+ إضافة شخص" تحت</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i) => {
+    const share = num(r.share);
+    const paid = num(r.paid);
+    const remain = share - paid;
+    const remainColor = remain > 0 ? 'var(--red)' : (remain < 0 ? 'var(--green)' : 'var(--muted)');
+    return `<tr data-idx="${i}">
+      <td><span class="row-num">${i+1}</span></td>
+      <td><input data-field="name" value="${esc(r.name||'')}" placeholder="اسم الشخص"></td>
+      <td><input data-field="share" type="number" min="0" step="any" value="${r.share||''}" placeholder="0" style="max-width:130px;margin:0 auto"></td>
+      <td><input data-field="paid" type="number" min="0" step="any" value="${r.paid||''}" placeholder="0" style="max-width:130px;margin:0 auto"></td>
+      <td class="row-net" style="color:${remainColor};font-weight:900">${fmt(remain)}</td>
+      <td><input data-field="notes" value="${esc(r.notes||'')}" placeholder="…" style="max-width:140px;margin:0 auto"></td>
+      <td><div class="row-actions"><button class="dup" data-bdup="${i}">📋</button><button class="del" data-bdel="${i}">✕</button></div></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateBudgetTotals(){
+  if(!currentProject) return;
+  const rows = currentProject.sections.budget || [];
+  const totalShare = rows.reduce((a,r) => a + num(r.share), 0);
+  const totalPaid = rows.reduce((a,r) => a + num(r.paid), 0);
+  const totalRemain = totalShare - totalPaid;
+
+  ['bs-total-share','budget-total-share','r-partner-total'].forEach(id => {
+    const el = $(id); if(el) el.textContent = money(totalShare);
+  });
+  ['bs-total-paid','budget-total-paid','r-partner-paid-kpi'].forEach(id => {
+    const el = $(id); if(el) el.textContent = money(totalPaid);
+  });
+  ['bs-total-remain','budget-total-remain','r-partner-remain'].forEach(id => {
+    const el = $(id); if(el) el.textContent = money(totalRemain);
+  });
+  const rp = $('r-partner-paid'); if(rp) rp.textContent = money(totalPaid);
+
+  const elBox = $('bs-remain-box'); if(elBox) elBox.classList.toggle('neg', totalRemain < 0);
+
+  const budgetTotal = num(currentProject.project.budgetTotal);
+  const inp = $('budget-total-input');
+  if(inp && !inp.disabled && inp.value !== String(budgetTotal || '')) inp.value = budgetTotal || '';
+
+  const warn = $('budget-total-warning');
+  if(warn){
+    if(budgetTotal > 0 && rows.length > 0){
+      const diff = budgetTotal - totalShare;
+      if(Math.abs(diff) > 0.01){
+        warn.style.display = 'flex';
+        warn.innerHTML = `<span>⚠️</span><span>إجمالي الأنصبة (${money(totalShare)}) ${diff > 0 ? 'أقل من' : 'أكثر من'} الميزانية (${money(budgetTotal)}) بفرق ${money(Math.abs(diff))}</span>`;
+      } else {
+        warn.style.display = 'none';
+      }
+    } else {
+      warn.style.display = 'none';
+    }
+  }
+}
+
+function bindBudgetTable(){
+  const tbody = $('budget-body'); if(!tbody) return;
+  tbody.addEventListener('input', e => {
+    if(!currentProject) return;
+    const tr = e.target.closest('tr'); if(!tr) return;
+    const idx = +tr.dataset.idx, field = e.target.dataset.field;
+    const row = currentProject.sections.budget[idx];
+    if(!row || !field) return;
+    const oldVal = row[field];
+    const newVal = (field === 'name' || field === 'notes') ? e.target.value : num(e.target.value);
+    if(oldVal !== newVal) pushUndo();
+    row[field] = newVal;
+    if(field === 'share' || field === 'paid'){
+      const remain = num(row.share) - num(row.paid);
+      const remainCell = tr.querySelector('.row-net');
+      if(remainCell){
+        remainCell.textContent = fmt(remain);
+        remainCell.style.color = remain > 0 ? 'var(--red)' : (remain < 0 ? 'var(--green)' : 'var(--muted)');
+      }
+    }
+    updateBudgetTotals();
+    updateTotals();
+    saveStorage();
+  });
+  tbody.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    const tr = e.target.closest('tr'); if(!tr) return;
+    const inputs = tr.querySelectorAll('input[data-field]');
+    const currentIdx = Array.from(inputs).indexOf(e.target);
+    if(currentIdx < inputs.length - 1){ inputs[currentIdx + 1].focus(); e.preventDefault(); }
+    else { addBudgetRow(); e.preventDefault(); }
+  });
+  tbody.addEventListener('click', e => {
+    const delBtn = e.target.closest('[data-bdel]');
+    if(delBtn){ deleteBudgetRow(+delBtn.dataset.bdel); return; }
+    const dupBtn = e.target.closest('[data-bdup]');
+    if(dupBtn){ duplicateBudgetRow(+dupBtn.dataset.bdup); return; }
+  });
+}
+
+function addBudgetRow(){
+  if(!currentProject) return;
+  pushUndo();
+  if(!Array.isArray(currentProject.sections.budget)) currentProject.sections.budget = [];
+  currentProject.sections.budget.push({ id: uid++, name:'', share:0, paid:0, notes:'' });
+  renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+  const tbody = $('budget-body');
+  const last = tbody.lastElementChild;
+  if(last){
+    const inp = last.querySelector('input');
+    if(inp) inp.focus();
+    last.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+}
+
+function deleteBudgetRow(idx){
+  pushUndo();
+  const row = currentProject.sections.budget[idx];
+  if(!row) return;
+  const snap = { idx, row: { ...row } };
+  currentProject.sections.budget.splice(idx, 1);
+  renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+  undoToast(`تم حذف "${row.name || 'الشخص'}"`, () => {
+    currentProject.sections.budget.splice(snap.idx, 0, snap.row);
+    renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+    toast('↩️ تم التراجع', 'ok');
+  });
+}
+
+function duplicateBudgetRow(idx){
+  pushUndo();
+  const row = currentProject.sections.budget[idx];
+  if(!row) return;
+  const copy = { ...row, id: uid++ };
+  currentProject.sections.budget.splice(idx + 1, 0, copy);
+  renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+  toast('📋 تم نسخ السطر', 'ok');
+}
+
+function onBudgetTotalChange(val){
+  if(!currentProject) return;
+  if(currentProject.project.linkBudgetToContract) return;
+  currentProject.project.budgetTotal = num(val);
+  updateBudgetTotals(); saveStorage();
+}
+
+async function toggleBudgetLink(){
+  if(!currentProject) return;
+  const ok = await customConfirm(
+    'ربط الميزانية بقيمة العقد',
+    currentProject.project.linkBudgetToContract
+      ? 'سيتم فصل الميزانية عن العقد، وستتمكن من تعديلها يدوياً. متابعة؟'
+      : 'سيتم مزامنة إجمالي الميزانية مع قيمة العقد تلقائياً. متابعة؟',
+    'تأكيد'
+  );
+  if(!ok) return;
+  pushUndo();
+  currentProject.project.linkBudgetToContract = !currentProject.project.linkBudgetToContract;
+  if(currentProject.project.linkBudgetToContract){
+    currentProject.project.budgetTotal = num(currentProject.project.contract);
+  }
+  syncBudgetLinkUI();
+  updateBudgetTotals();
+  updateTotals();
+  saveStorage();
+  toast(currentProject.project.linkBudgetToContract ? '🔗 الميزانية مرتبطة بالعقد' : '🔓 الميزانية غير مرتبطة', 'ok');
+}
+
+async function distributeEqually(){
+  if(!currentProject) return;
+  const total = num(currentProject.project.budgetTotal);
+  if(total <= 0){ toast('❌ أدخل إجمالي الميزانية أولاً', 'err'); return; }
+  const rows = currentProject.sections.budget || [];
+  if(rows.length === 0){ toast('❌ أضف أفراد أولاً', 'err'); return; }
+  const ok = await customConfirm('توزيع متساوي', `توزيع ${money(total)} على ${rows.length} أفراد بالتساوي؟ (سيتم استبدال الأنصبة الحالية)`, 'توزيع');
+  if(!ok) return;
+  pushUndo();
+  const perPerson = Math.round((total / rows.length) * 100) / 100;
+  let accumulated = 0;
+  rows.forEach((r, i) => {
+    if(i === rows.length - 1){ r.share = Math.round((total - accumulated) * 100) / 100; }
+    else { r.share = perPerson; accumulated += perPerson; }
+  });
+  renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+  toast('✅ تم التوزيع بالتساوي', 'ok');
+}
+
+async function clearAllShares(){
+  const rows = currentProject?.sections?.budget || [];
+  if(rows.length === 0) return;
+  const ok = await customConfirm('مسح الأنصبة', 'هل تريد تصفير نصيب كل الأفراد؟ (المدفوعات هتفضل زي ما هي)', 'مسح');
+  if(!ok) return;
+  pushUndo();
+  rows.forEach(r => r.share = 0);
+  renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+  toast('✅ تم مسح الأنصبة', 'ok');
+}
+
+async function clearAllPaid(){
+  const rows = currentProject?.sections?.budget || [];
+  if(rows.length === 0) return;
+  const ok = await customConfirm('مسح المدفوعات', 'هل تريد تصفير مبلغ الدفع لكل الأفراد؟ (الأنصبة هتفضل زي ما هي)', 'مسح');
+  if(!ok) return;
+  pushUndo();
+  rows.forEach(r => r.paid = 0);
+  renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+  toast('✅ تم مسح المدفوعات', 'ok');
+}
+
+async function clearAllBudget(){
+  const rows = currentProject?.sections?.budget || [];
+  if(rows.length === 0) return;
+  const ok = await customConfirm('حذف كل الأفراد', `سيتم حذف ${rows.length} شخص نهائياً. متابعة؟`, 'حذف');
+  if(!ok) return;
+  pushUndo();
+  currentProject.sections.budget = [];
+  renderBudget(); updateBudgetTotals(); updateTotals(); saveStorage();
+  toast('🗑️ تم الحذف', 'ok');
+}
+
+/* ============ Toast ============ */
+function toast(msg, type=''){
+  const wrap = $('toast-wrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => el.remove(), 300);
+  }, 3000);
+}
+function undoToast(msg, onUndo){
+  const wrap = $('toast-wrap');
+  const el = document.createElement('div');
+  el.className = 'toast info';
+  el.innerHTML = `<span>🗑️ ${esc(msg)}</span><span class="undo-btn">↩️ تراجع</span>`;
+  el.querySelector('.undo-btn').onclick = () => { el.remove(); onUndo(); };
+  wrap.appendChild(el);
+  setTimeout(() => {
+    if(el.parentNode){ el.classList.add('out'); setTimeout(() => el.remove(), 300); }
+  }, 5000);
+}
+
+/* ============ Custom Confirm ============ */
+let confirmResolve = null;
+function customConfirm(title, message, yesText){
+  return new Promise(resolve => {
+    confirmResolve = resolve;
+    $('confirm-title').textContent = title;
+    $('confirm-message').textContent = message;
+    $('confirm-yes').textContent = yesText || 'تأكيد';
+    $('modal-overlay').classList.add('show');
+    $('confirm-modal').classList.add('show');
+  });
+}
+function closeModal(){
+  $('modal-overlay').classList.remove('show');
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('show'));
+  if(confirmResolve){ confirmResolve(false); confirmResolve = null; }
+}
+
+/* ============ Modals ============ */
+function showHelp(){
+  $('modal-overlay').classList.add('show');
+  $('help-modal').classList.add('show');
+}
+function showBackups(){
+  const list = $('backups-list');
+  let backups = [];
+  try{ backups = JSON.parse(localStorage.getItem(BACKUP_KEY) || '[]'); }catch(e){}
+  backups = backups.filter(b => !b.userId || b.userId === currentUser?.id);
+  if(backups.length === 0){
+    list.innerHTML = '<p style="text-align:center;color:var(--muted);padding:20px">لا توجد نسخ احتياطية بعد</p>';
+  } else {
+    list.innerHTML = backups.map((b, i) => {
+      const d = new Date(b.time);
+      const timeStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      return `<div class="backup-item" onclick="restoreBackup(${i})">
+        <span style="font-size:1.2rem">🕐</span>
+        <div class="backup-info">
+          <div class="backup-name">${esc(b.name || 'مشروع')}</div>
+          <div class="backup-time">${timeStr}</div>
+        </div>
+        <span style="color:var(--primary-2);font-weight:800;font-size:.72rem">استرجاع</span>
+      </div>`;
+    }).join('');
+  }
+  $('modal-overlay').classList.add('show');
+  $('backups-modal').classList.add('show');
+}
+async function restoreBackup(idx){
+  let backups = [];
+  try{ backups = JSON.parse(localStorage.getItem(BACKUP_KEY) || '[]'); }catch(e){}
+  backups = backups.filter(b => !b.userId || b.userId === currentUser?.id);
+  const backup = backups[idx];
+  if(!backup) return;
+  const ok = await customConfirm('استرجاع نسخة احتياطية', 'سيتم استبدال بيانات المشروع الحالي بالنسخة المختارة. متابعة؟', 'استرجاع');
+  if(!ok) return;
+  try{
+    const data = JSON.parse(backup.data);
+    pushUndo();
+    currentProject.project = data.project;
+    currentProject.sections = data.sections;
+    migrateProject(currentProject);
+    fixUid();
+    fillProjectInputs();
+    renderAll();
+    saveStorage();
+    closeModal();
+    toast('✅ تم استرجاع النسخة', 'ok');
+  }catch(e){ toast('❌ النسخة تالفة', 'err'); }
+}
+
+/* ============ Save / Export ============ */
+function saveNow(){ saveStorage(); toast('✅ تم الحفظ', 'ok'); }
+const dateStamp = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const fileBase = () => (String(currentProject.project.name||'مشروع').replace(/[\\/:*?"<>|\n\r\t]/g,'').trim().slice(0,60)||'مشروع') + '-' + dateStamp();
+function downloadFile(filename, content, mime){
+  try{
+    const blob = new Blob([content], {type: mime});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.rel = 'noopener'; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    return true;
+  }catch(err){ return false; }
+}
+async function saveAsFile(){
+  const content = JSON.stringify({ version: 3, project: currentProject }, null, 2);
+  const filename = fileBase() + '.json';
+  if(window.showSaveFilePicker){
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description:'نسخة احتياطية JSON', accept:{'application/json':['.json']} }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      toast('✅ تم الحفظ', 'ok');
+      return;
+    }catch(err){ if(err.name === 'AbortError'){ toast('تم الإلغاء','info'); return; } }
+  }
+  downloadFile(filename, '\ufeff' + content, 'application/json;charset=utf-8');
+  toast('📥 اتحفظ في مجلد التنزيلات', 'ok');
+}
+function pickRestore(){ $('restore-file').click(); }
+function restoreJSON(e){
+  const file = e.target.files && e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    try{
+      let data = JSON.parse(ev.target.result);
+      const proj = data.project || data;
+      if(!proj || !proj.sections) throw new Error('bad');
+      const ok = await customConfirm('استرجاع ملف', 'سيتم استبدال بيانات المشروع الحالي بالملف. متابعة؟', 'استرجاع');
+      if(!ok) return;
+      pushUndo();
+      currentProject.project = { name:'', client:'', date:new Date().toISOString().slice(0,10), currency:'ج.م', contract:0, received:0, includeWoodInCosts:false, woodPaid:0, notes:'', budgetTotal:0, linkBudgetToContract:false, ...proj.project };
+      SECTIONS.forEach(k => { currentProject.sections[k] = Array.isArray(proj.sections[k]) ? proj.sections[k] : []; });
+      currentProject.ownerId = currentUser.id;
+      migrateProject(currentProject);
+      fixUid();
+      fillProjectInputs(); renderAll(); saveStorage();
+      toast('📤 تم الاسترجاع بنجاح', 'ok');
+    }catch(err){ toast('❌ الملف غير صالح', 'err'); }
+    finally{ e.target.value = ''; }
+  };
+  reader.readAsText(file);
+}
+function fixUid(){
+  let maxId = 0;
+  SECTIONS.forEach(k => (currentProject.sections[k]||[]).forEach(r => {
+    if(typeof r.id === 'number' && r.id > maxId) maxId = r.id;
+  }));
+  uid = maxId + 1;
+}
+
+/* ============ Excel / CSV ============ */
+function htmlEsc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function exportExcel(){
+  try{
+    const t = computeTotals();
+    const rows = [];
+    rows.push('<tr><td colspan="2" style="font-size:16pt;font-weight:bold;color:#12304f">تقرير مقاولات الخرسانة</td></tr>');
+    rows.push('<tr><td colspan="2"></td></tr>');
+    rows.push(`<tr><td style="font-weight:bold;background:#f1f5f9">اسم المشروع</td><td>${htmlEsc(currentProject.project.name||'--')}</td></tr>`);
+    rows.push(`<tr><td style="font-weight:bold;background:#f1f5f9">اسم العميل</td><td>${htmlEsc(currentProject.project.client||'--')}</td></tr>`);
+    rows.push(`<tr><td style="font-weight:bold;background:#f1f5f9">التاريخ</td><td>${htmlEsc(currentProject.project.date||'--')}</td></tr>`);
+    rows.push('<tr><td colspan="2"></td></tr>');
+    rows.push('<tr><td style="font-weight:bold;background:#12304f;color:#fff">البيان</td><td style="font-weight:bold;background:#12304f;color:#fff">القيمة</td></tr>');
+    rows.push(`<tr><td>إجمالي التكاليف</td><td>${t.costs}</td></tr>`);
+    rows.push(`<tr><td>المدفوعات</td><td>${t.payments}</td></tr>`);
+    rows.push(`<tr><td>قيمة العقد</td><td>${t.contract}</td></tr>`);
+    rows.push(`<tr><td>المستلم من العميل</td><td>${t.received}</td></tr>`);
+    rows.push(`<tr><td>مدفوعات الشركاء</td><td>${t.partnerPaid}</td></tr>`);
+    rows.push(`<tr><td>متبقي على الشركاء</td><td>${t.partnerRemain}</td></tr>`);
+    rows.push(`<tr><td>الرصيد النقدي</td><td>${t.cash}</td></tr>`);
+    rows.push(`<tr><td style="font-weight:bold;background:#dbeafe">صافي الربح</td><td style="font-weight:bold;background:#dbeafe">${t.profit}</td></tr>`);
+
+    ['misc','concrete','transport','wood'].forEach(k => {
+      const sec = currentProject.sections[k] || [];
+      if(sec.length === 0) return;
+      rows.push('<tr><td colspan="2"></td></tr>');
+      rows.push(`<tr><td colspan="2" style="font-weight:bold;background:#12304f;color:#fff">${k==='misc'?'المسامير':k==='concrete'?'الخرسانة':k==='transport'?'النقل':'الخشب'}</td></tr>`);
+      sec.forEach((r,i) => {
+        const val = k==='concrete' ? concreteRowValue(r) : rowTotal(r);
+        rows.push(`<tr><td>${i+1}. ${htmlEsc(r.desc||'--')}</td><td>${val}</td></tr>`);
+      });
+    });
+
+    const bsec = currentProject.sections.budget || [];
+    if(bsec.length > 0){
+      rows.push('<tr><td colspan="2"></td></tr>');
+      rows.push(`<tr><td colspan="2" style="font-weight:bold;background:#7c3aed;color:#fff">الميزانية / الشركاء</td></tr>`);
+      bsec.forEach((r,i) => {
+        rows.push(`<tr><td>${i+1}. ${htmlEsc(r.name||'--')} (نصيب: ${r.share||0} - دفع: ${r.paid||0})</td><td>${num(r.share)-num(r.paid)}</td></tr>`);
+      });
+    }
+
+    const html = '<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><style>td{border:0.5pt solid #cbd5e1;padding:4px 8px;text-align:right;font-family:Cairo,Arial,sans-serif}</style></head><body dir="rtl"><table>'+rows.join('')+'</table></body></html>';
+    downloadFile(fileBase() + '.xls', '\ufeff' + html, 'application/vnd.ms-excel;charset=utf-8');
+    toast('📊 تم التصدير', 'ok');
+  }catch(err){ toast('❌ خطأ: ' + err.message, 'err'); }
+}
+function exportCSV(){
+  const t = computeTotals();
+  const lines = [];
+  const cs = v => {
+    const s = String(v ?? '');
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g,'""') + '"' : s;
+  };
+  lines.push(cs('المشروع') + ',' + cs(currentProject.project.name));
+  lines.push(cs('العميل') + ',' + cs(currentProject.project.client));
+  lines.push(cs('التاريخ') + ',' + cs(currentProject.project.date));
+  lines.push(cs('العملة') + ',' + cs(currentProject.project.currency));
+  lines.push(cs('قيمة العقد') + ',' + cs(t.contract));
+  lines.push('');
+  lines.push(['القسم','البيان','الكمية','سعر الوحدة','الإجمالي','ملاحظات'].map(cs).join(','));
+  ['misc','wood','transport','concrete'].forEach(k => {
+    (currentProject.sections[k]||[]).forEach(r => {
+      const val = k==='concrete' ? concreteRowValue(r) : rowTotal(r);
+      lines.push([k, r.desc||'', r.qty||'', r.price||'', val, r.notes||''].map(cs).join(','));
+    });
+  });
+  lines.push('');
+  lines.push(cs('المدفوعات') + ',' + cs(''));
+  (currentProject.sections.payments||[]).forEach(r => {
+    lines.push(['دفعة', r.desc||'', r.date||'', r.price||'', '', r.notes||''].map(cs).join(','));
+  });
+  lines.push('');
+  lines.push(cs('المستلم من العميل') + ',' + cs(''));
+  (currentProject.sections.received||[]).forEach(r => {
+    lines.push(['مستلم', r.desc||'', r.date||'', r.price||'', '', r.notes||''].map(cs).join(','));
+  });
+  lines.push('');
+  lines.push(cs('الميزانية/الشركاء') + ',' + cs(''));
+  (currentProject.sections.budget||[]).forEach(r => {
+    lines.push(['شريك', r.name||'', r.share||'', r.paid||'', num(r.share)-num(r.paid), r.notes||''].map(cs).join(','));
+  });
+  const csv = '\ufeff' + lines.join('\r\n');
+  downloadFile(fileBase() + '.csv', csv, 'text/csv;charset=utf-8');
+  toast('📄 تم تصدير CSV', 'ok');
+}
+
+/* ============ Share ============ */
+async function shareSummary(){
+  const t = computeTotals();
+  let text = `🏗️ ${currentProject.project.name || 'مشروع مقاولات'}
+👤 العميل: ${currentProject.project.client || '--'}
+📅 التاريخ: ${currentProject.project.date || '--'}
+
+📊 الملخص:
+💰 قيمة العقد: ${money(t.contract)}
+📉 إجمالي التكاليف: ${money(t.costs)}
+💸 المدفوعات: ${money(t.payments)}
+📥 المستلم من العميل: ${money(t.received)}
+${t.profit >= 0 ? '✅' : '❌'} صافي الربح: ${money(t.profit)}
+📈 نسبة الربح: ${fmt(t.margin)}%`;
+
+  if(t.budgetRows.length > 0){
+    text += `\n\n👥 الشركاء (${t.budgetRows.length}):
+💵 إجمالي الأنصبة: ${money(t.partnerShare)}
+✅ مدفوع: ${money(t.partnerPaid)}
+⏳ متبقي: ${money(t.partnerRemain)}
+
+تفاصيل:
+${t.budgetRows.map((r,i) => `${i+1}. ${r.name||'--'}: نصيب ${fmt(num(r.share))} - دفع ${fmt(num(r.paid))} - باقي ${fmt(num(r.share)-num(r.paid))}`).join('\n')}`;
+  }
+
+  if(navigator.share){
+    try{ await navigator.share({ title: 'ملخص المشروع', text }); toast('✅ تمت المشاركة', 'ok'); return; }
+    catch(e){ if(e.name === 'AbortError') return; }
+  }
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('📋 تم نسخ الملخص — الصقه في واتساب', 'ok');
+    const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    setTimeout(() => {
+      if(confirm('فتح واتساب لإرسال الملخص؟')) window.open(wa, '_blank');
+    }, 300);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast('📋 تم النسخ', 'ok'); }catch(err){}
+    document.body.removeChild(ta);
+  }
+}
+
+/* ============ Print / Reset / Theme ============ */
+function printPage(){ window.print(); }
+
+async function resetAll(){
+  if(!currentProject) return;
+  const ok = await customConfirm('مسح بيانات المشروع', 'سيتم مسح كل بنود المشروع الحالي وبياناته (شامل الميزانية). (النسخ الاحتياطية متاحة).', 'مسح');
+  if(!ok) return;
+  pushUndo();
+  const pid = currentProject.id;
+  const ownerId = currentProject.ownerId;
+  const newP = createDefaultProject();
+  newP.id = pid;
+  newP.ownerId = ownerId;
+  currentProject = newP;
+  allProjects = allProjects.map(p => p.id === pid ? newP : p);
+  fillProjectInputs();
+  renderAll();
+  saveStorage();
+  toast('✅ تم المسح والبدء من جديد', 'ok');
+}
+
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
+  const btn = $('theme-btn');
+  if(btn) btn.textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
+/* ============ Install ============ */
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+function detectBrowser(){
+  const ua = navigator.userAgent.toLowerCase();
+  if(/iphone|ipad|ipod/.test(ua)) return 'ios';
+  if(/android/.test(ua)) return /chrome/.test(ua) ? 'android-chrome' : 'android-other';
+  if(/edg\//.test(ua)) return 'edge';
+  if(/chrome\//.test(ua)) return 'chrome';
+  if(/firefox/.test(ua)) return 'firefox';
+  if(/safari/.test(ua)) return 'safari';
+  return 'unknown';
+}
+
+function getInstallInstructions(){
+  const browser = detectBrowser();
+  const isFile = location.protocol === 'file:';
+  const isHttp = location.protocol === 'http:' && location.hostname !== 'localhost';
+
+  if(isFile){
+    return {
+      title: '⚠️ التثبيت مش ممكن من ملف محلي',
+      body: `أنت فاتح الملف مباشرة (file://).\n\nللتثبيت كتطبيق:\n\n1. ارفع الملف على استضافة HTTPS مجانية مثل:\n   • GitHub Pages\n   • Netlify\n   • Vercel\n\n2. افتح الرابط من المتصفح\n\n3. اضغط زر التثبيت تاني`,
+      type: 'err'
+    };
+  }
+  if(isHttp){
+    return {
+      title: '⚠️ التثبيت يحتاج HTTPS',
+      body: `التثبيت كتطبيق بيتطلب اتصال آمن (HTTPS).\n\nالموقع الحالي: ${location.protocol}//${location.hostname}\n\nارفع الملف على استضافة HTTPS زي GitHub Pages أو Netlify.`,
+      type: 'err'
+    };
+  }
+
+  switch(browser){
+    case 'ios':
+      return {
+        title: '📱 التثبيت على iPhone/iPad',
+        body: `الخطوات:\n\n1. اضغط زر المشاركة (⬆️) في شريط Safari السفلي\n2. اختر "إضافة إلى الشاشة الرئيسية"\n3. اضغط "إضافة"\n\n✅ التطبيق هيظهر كأيقونة على الشاشة`,
+        type: 'info'
+      };
+    case 'android-chrome':
+    case 'chrome':
+    case 'edge':
+      return {
+        title: '💻 التثبيت على Chrome/Edge',
+        body: `الخطوات:\n\n1. اضغط ⋮ (قائمة) في أعلى المتصفح\n2. اختر "تثبيت التطبيق" أو "Install App"\n   أو اضغط أيقونة ⊕ في شريط العنوان\n3. اضغط "تثبيت"\n\n${!('serviceWorker' in navigator) ? '⚠️ متصفحك لا يدعم SW، التثبيت قد لا يظهر' : '✅ متصفحك يدعم التثبيت'}`,
+        type: 'info'
+      };
+    case 'firefox':
+      return {
+        title: '🦊 Firefox',
+        body: `Firefox مش بيدعم تثبيت PWA على سطح المكتب بشكل مباشر.\n\nالحلول:\n• استخدم Chrome أو Edge للتثبيت\n• أو أضف الموقع للمفضلة واستخدمه كصفحة عادية`,
+        type: 'warn'
+      };
+    case 'safari':
+      return {
+        title: '🧭 Safari على Mac',
+        body: `الخطوات:\n\n1. من قائمة Safari → File\n2. اختر "Add to Dock"\n3. أو اسحب الأيقونة من شريط العنوان\n\n(متاح في macOS Sonoma+)`,
+        type: 'info'
+      };
+    default:
+      return {
+        title: '📱 التثبيت',
+        body: `متصفحك: ${navigator.userAgent}\n\nحاول:\n• Chrome/Edge: قائمة ⋮ → "تثبيت التطبيق"\n• Safari (iOS): مشاركة → "إضافة إلى الشاشة الرئيسية"`,
+        type: 'info'
+      };
+  }
+}
+
+async function handleInstall(){
+  if(deferredPrompt){
+    try{
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if(outcome === 'accepted'){
+        toast('✅ تم التثبيت بنجاح', 'ok');
+      } else {
+        toast('ℹ️ تم إلغاء التثبيت', 'info');
+      }
+    }catch(e){
+      toast('❌ فشل التثبيت — جرب يدوياً', 'err');
+    }
+    deferredPrompt = null;
+    return;
+  }
+
+  const info = getInstallInstructions();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay show';
+  overlay.style.zIndex = '10001';
+  overlay.innerHTML = `
+    <div class="modal show" style="z-index:10002;width:min(500px,92vw)">
+      <div class="modal-header">
+        <h3>${info.title}</h3>
+        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+      </div>
+      <div class="modal-body" style="white-space:pre-line;line-height:1.9;font-size:.9rem">${esc(info.body)}</div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="this.closest('.modal-overlay').remove()">تمام، فهمت</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+/* ============ INIT & BOOT ============ */
+function initThemeBtn(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'light';
+  const btn = $('theme-btn');
+  if(btn) btn.textContent = cur === 'dark' ? '☀️' : '🌙';
+}
+
+function bindGlobalEvents(){
+  $('confirm-yes').onclick = () => { if(confirmResolve){ confirmResolve(true); confirmResolve = null; } closeModal(); };
+  $('auth-form').addEventListener('submit', handleAuthSubmit);
+  SECTIONS.forEach(k => { if(k !== 'budget') bindTable(k); });
+  bindBudgetTable();
+  bindWoodPaid();
+
+  window.addEventListener('keydown', e => {
+    const tag = (e.target.tagName || '').toUpperCase();
+    const inField = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+    if((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey){ e.preventDefault(); doUndo(); }
+    else if(((e.ctrlKey || e.metaKey) && (e.key === 'y' || e.key === 'Y')) || ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'z' || e.key === 'Z'))){ e.preventDefault(); doRedo(); }
+    else if((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')){ e.preventDefault(); saveNow(); }
+    else if(e.key === '?' && !inField){ e.preventDefault(); showHelp(); }
+  });
+
+  window.addEventListener('scroll', updateStickyVisibility, { passive: true });
+  window.addEventListener('beforeunload', () => { try{ saveStorage(); }catch(e){} });
+}
+
+async function bootApp(){
+  initThemeBtn();
+  bindGlobalEvents();
+  try{ currentPage = localStorage.getItem(PAGE_KEY) || 'calculator'; }catch(e){ currentPage = 'calculator'; }
+  const users = loadUsers();
+  const session = loadSession();
+  if(users.length === 0){ showAuthScreen('setup'); return; }
+  if(session && session.userId){
+    const user = users.find(u => u.id === session.userId && u.active !== false);
+    if(user){ await loginAs(user, false); return; }
+  }
+  showAuthScreen('login');
+}
+
+bootApp();
+</script>
+</body>
+</html>
